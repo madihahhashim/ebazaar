@@ -42,7 +42,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <body>
 	<!-- top-header -->
 	<div class="header-most-top">
-		<p>Grocery Offer Zone Top Deals & Discounts</p>
+		<p></p>
 	</div>
 	<!-- //top-header -->
 	<!-- header-bot-->
@@ -51,7 +51,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<!-- header-bot-->
 			<div class="col-md-4 logo_agile">
 				<h1>
-					<a href="index.html">
+					<a href="index.php">
 						<span>e</span>
 						<span>B</span>azar
 						<img src="images/logo2.png" alt=" ">
@@ -276,7 +276,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="collapse navbar-collapse menu--shylock" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav menu__list">
 								<li class="active">
-									<a class="nav-stylehead" href="index.html">Home
+									<a class="nav-stylehead" href="index.php">Home
 										<span class="sr-only">(current)</span>
 									</a>
 								</li>
@@ -660,7 +660,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<div class="inner-men-cart-pro">
 											<?php
 												include('connection/connection.php');
-												echo "<a href='list.php?PRODUCTID=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
 											?>
 										</div>
 									</div>

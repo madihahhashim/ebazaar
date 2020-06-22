@@ -1,14 +1,17 @@
-<!--
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
--->
 <!DOCTYPE html>
-<html lang="zxx">
+<?php
 
+include('connection/connection.php');
+
+$sql = "SELECT * FROM PRODUCT P JOIN FOOD F ON P.PRODUCTID=F.PRODUCTID";
+$result = oci_parse($conn,$sql);
+oci_execute ($result);
+
+?>
+
+<html lang="zxx">
 <head>
-	<title>Grocery Shoppy an Ecommerce Category Bootstrap Responsive Web Template | Home :: w3layouts</title>
+	<title>eBazar</title>
 	<!--/tags -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -39,7 +42,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <body>
 	<!-- top-header -->
 	<div class="header-most-top">
-		<p>Grocery Offer Zone Top Deals & Discounts</p>
+		<p></p>
 	</div>
 	<!-- //top-header -->
 	<!-- header-bot-->
@@ -48,9 +51,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<!-- header-bot-->
 			<div class="col-md-4 logo_agile">
 				<h1>
-					<a href="index.html">
-						<span>G</span>rocery
-						<span>S</span>hoppy
+					<a href="index.php">
+						<span>e</span>
+						<span>B</span>azar
 						<img src="images/logo2.png" alt=" ">
 					</a>
 				</h1>
@@ -273,7 +276,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="collapse navbar-collapse menu--shylock" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav menu__list">
 								<li class="active">
-									<a class="nav-stylehead" href="index.html">Home
+									<a class="nav-stylehead" href="index.php">Home
 										<span class="sr-only">(current)</span>
 									</a>
 								</li>
@@ -525,7 +528,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="..\bazaar\gambar\murtabak.jpg" alt="MURTABAK" style="width:150px;height:80px;border:0;">
+									<img src="..\bazaar\gambar\murtabak.jpg" alt="MURTABAK" width="90%" height="30%">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -564,7 +567,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/m2.jpg" alt="">
+									<img src="..\bazaar\gambar\satay.jpg" alt="SATAY">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -587,7 +590,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 												<input type="hidden" name="cmd" value="_cart" />
 												<input type="hidden" name="add" value="1" />
 												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="Cashew Nuts, 100g" />
+												<input type="hidden" name="item_name" value="SATAY" />
 												<input type="hidden" name="amount" value="200.00" />
 												<input type="hidden" name="discount_amount" value="1.00" />
 												<input type="hidden" name="currency_code" value="USD" />
@@ -604,7 +607,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/m3.jpg" alt="">
+									<img src="..\bazaar\gambar\lemang.jpg" alt="LEMANG">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -645,18 +648,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					</div>
 					<!-- //first section (nuts) -->
 					<!-- second section (nuts special) -->
-					<div class="product-sec1 product-sec2">
-						<div class="col-xs-7 effect-bg">
-							<h3 class="">Pure Energy</h3>
-							<h6>Enjoy our all healthy Products</h6>
-							<p>Get Extra 10% Off</p>
-						</div>
-						<h3 class="w3l-nut-middle">Nuts & Dry Fruits</h3>
-						<div class="col-xs-5 bg-right-nut">
-							<img src="images/nut1.png" alt="">
-						</div>
-						<div class="clearfix"></div>
-					</div>
 					<!-- //second section (nuts special) -->
 					<!-- third section (oils) -->
 					<div class="product-sec1">
@@ -664,17 +655,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/mk4.jpg" alt="">
+									<img src="..\bazaar\gambar\karipap.jpg" alt="KARIPAP" width="75%" height="30%">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+											<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">KARIPAP</a>
+									<a href="single.html">KARIPAP</a>
+										
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$78.00</span>
@@ -703,7 +698,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/mk5.jpg" alt="">
+									<img src="..\bazaar\gambar\donut.jpg" alt="DONUT">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -743,7 +738,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/mk6.jpg" alt="">
+									<img src="..\bazaar\gambar\pelita.jpg" alt="KUIH PELITA">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -789,7 +784,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/mk7.jpg" alt="">
+									<img src="..\bazaar\gambar\tebu.jpg" alt="AIR TEBU">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -827,7 +822,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/mk8.jpg" alt="">
+									<img src="..\bazaar\gambar\kelapa.jpg" alt="AIR KELAPA">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -867,7 +862,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="images/mk9.jpg" alt="">
+									<img src="..\bazaar\gambar\cendol.jpg" alt="CENDOL">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -1120,10 +1115,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 											<input type="hidden" name="business" value=" " />
 											<input type="hidden" name="item_name" value="Fair & Lovely, 80 g" />
 											<input type="hidden" name="amount" value="121.60" />
-											<input type="hidden" name="discount_amount" value="1.00" />
-											<input type="hidden" name="currency_code" value="USD" />
-											<input type="hidden" name="return" value=" " />
-											<input type="hidden" name="cancel_return" value=" " />
 											<input type="submit" name="submit" value="Add to cart" class="button" />
 										</fieldset>
 									</form>
@@ -1204,7 +1195,92 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		</div>
 	</div>
 	<!-- //special offers -->
-	
+	<hr>
+	<footer>
+		<div class="container">
+			
+				<!-- //footer categories -->
+				<!-- quick links -->
+				<div class="col-sm-5 address-right">
+					<div class="col-xs-6 footer-grids"><center>
+						<h3>Quick Links</h3>
+						<ul>
+							<li>
+								<a href="about.html">About Us</a>
+							</li>
+							<li>
+								<a href="contact.html">Contact Us</a>
+							</li>
+							<li>
+								<a href="help.html">Help</a>
+							</li>
+							<li>
+								<a href="faqs.html">Faqs</a>
+							</li>
+							<li>
+								<a href="terms.html">Terms of use</a>
+							</li>
+							<li>
+								<a href="privacy.html">Privacy Policy</a>
+							</li>
+						</ul><center>
+					</div>
+					<div class="col-xs-6 footer-grids">
+						<h3>Get in Touch</h3>
+						<ul>
+							<li>
+								<i class="fa fa-map-marker"></i> 123 Sebastian, USA.</li>
+							<li>
+								<i class="fa fa-mobile"></i> 333 222 3333 </li>
+							<li>
+								<i class="fa fa-phone"></i> +222 11 4444 </li>
+							<li>
+								<i class="fa fa-envelope-o"></i>
+								<a href="mailto:example@mail.com"> mail@example.com</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- //quick links -->
+				<!-- social icons -->
+				<div class="col-sm-2 footer-grids  w3l-socialmk">
+					<h3>Follow Us on</h3>
+					<div class="social">
+						<ul>
+							<li>
+								<a class="icon fb" href="#">
+									<i class="fa fa-facebook"></i>
+								</a>
+							</li>
+							<li>
+								<a class="icon tw" href="#">
+									<i class="fa fa-twitter"></i>
+								</a>
+							</li>
+							<li>
+								<a class="icon gp" href="#">
+									<i class="fa fa-google-plus"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="agileits_app-devices">
+						<h5>Download the App</h5>
+						<a href="#">
+							<img src="images/1.png" alt="">
+						</a>
+						<a href="#">
+							<img src="images/2.png" alt="">
+						</a>
+						<div class="clearfix"> </div>
+					</div>
+				</div>
+				<!-- //social icons -->
+				
+			</div>
+			<!-- //footer fourth section (text) -->
+		</div>
+	</footer>
 	
 	<!-- //footer -->
 	<!-- copyright -->

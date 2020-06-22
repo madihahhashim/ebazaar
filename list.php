@@ -5,19 +5,20 @@ if(isset($_GET['productid']))
 {
 	include("connection/connection.php");
 	$productid = $_GET['productid'];
-	$foodid = $_GET['foodid'];
+	//$foodid = $_GET['foodid'];
 
-	$sql = "SELECT * FROM PRODUCT P JOIN FOOD F ON P.PRODUCTID=F.PRODUCTID WHERE P.PRODUCTID=$productid and (SELECT * FROM FOOD WHERE FOODID = $foodid) ";
+	$sql = "SELECT * FROM PRODUCT  WHERE productid=$productid  ";
 	$result = oci_parse($conn,$sql);
-	$resultb = oci_execute ($result);
-	echo $resultb;
+ 	oci_execute($result);
+	$resultb = oci_fetch_assoc($result);
+	
 	
 }
 ?>
 <html lang="zxx">
 
 <head>
-	<title>Grocery Shoppy an Ecommerce Category Bootstrap Responsive Web Template | Single :: w3layouts</title>
+	<title>eBazar</title>
 	<!--/tags -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -59,9 +60,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<!-- header-bot-->
 			<div class="col-md-4 logo_agile">
 				<h1>
-					<a href="index.html">
-						<span>G</span>rocery
-						<span>S</span>hoppy
+				<a href="index.php">
+						<span>e</span>
+						<span>B</span>azar
 						<img src="images/logo2.png" alt=" ">
 					</a>
 				</h1>
@@ -269,7 +270,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="collapse navbar-collapse menu--shylock" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav menu__list">
 								<li>
-									<a class="nav-stylehead" href="index.html">Home
+									<a class="nav-stylehead" href="index.php">Home
 										<span class="sr-only">(current)</span>
 									</a>
 								</li>
@@ -437,7 +438,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<div class="container">
 				<ul class="w3_short">
 					<li>
-						<a href="index.html">Home</a>
+						<a href="index.php">Home</a>
 						<i>|</i>
 					</li>
 					<li>Single Page</li>
@@ -499,7 +500,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<form class="form-horizontal"  method="post" action = "list.php">
 						<div class="form-group">
 							<div class="col-sm-8">
-									<input type="hidden" name='PRODUCTID' class="form-control slide-in-right" style="border-radius:5px;" id="PRODUCTID" value="<?php echo $resultb['PRODUCTID']; ?>" required>
+									<input type="hidden" name='productid' class="form-control slide-in-right" style="border-radius:5px;" id="PRODUCTID" value="<?php echo $resultb['PRODUCTID']; ?>" required>
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
@@ -520,8 +521,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="form-group">
 							<label for="focusedinput" class="col-sm-2 control-label">DETAILS</label>
 							<div class="col-sm-8">
-								<textarea rows="4" cols="100" type="text" name='P_DESC' class="form-control slide-in-right" style="border-radius:10px;" id="P_DESC" value="<?php echo $resultb['P_DESC']; ?>" required>
-								</textarea>
+								<textarea rows="4" cols="50" type="text" name='P_DESC' class="form-control slide-in-right" style="border-radius:10px;" id="P_DESC" ><?php echo $resultb['P_DESC']; ?></textarea>
 							</div>
 							<div class="col-sm-2"></div>
 						</div>			
