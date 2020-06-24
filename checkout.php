@@ -600,7 +600,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<div class="creditly-wrapper wthree, w3_agileits_wrapper">
 							<div class="information-wrapper">
 							<div class="form-group">
-								<label for="focusedinput" class="col-sm-2 control-label">Ticket Number</label>
+								
 								<div class="col-sm-8">
 								<?php
 									$random=mt_rand(100000,999999);

@@ -3,7 +3,7 @@
 
 include('connection/connection.php');
 
-$sql = "SELECT * FROM PRODUCT P JOIN FOOD F ON P.PRODUCTID=F.PRODUCTID";
+$sql = "SELECT * FROM PRODUCT ";
 $result = oci_parse($conn,$sql);
 oci_execute ($result);
 
@@ -531,14 +531,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\murtabak.jpg" alt="MURTABAK" width="90%" height="30%">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">MURTABAK</a>
+										<p>MURTABAK</p>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$149.00</span>
@@ -570,7 +573,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\satay.jpg" alt="SATAY">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
@@ -578,7 +584,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">SATAY</a>
+										<p>SATAY</p>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$200.00</span>
@@ -610,7 +616,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\lemang.jpg" alt="LEMANG">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
@@ -618,7 +627,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">LEMANG</a>
+										<p>LEMANG</p>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$520.99</span>
@@ -668,7 +677,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 								<div class="item-info-product ">
 									<h4>
-									<a href="single.html">KARIPAP</a>
+									<p>KARIPAP</p>
 										
 									</h4>
 									<div class="info-product-price">
@@ -701,7 +710,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\donut.jpg" alt="DONUT">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
@@ -709,7 +721,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">DONUT</a>
+										<p>DONUT</p>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$130.00</span>
@@ -741,7 +753,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\pelita.jpg" alt="KUIH PELITA">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
@@ -749,7 +764,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">KUIH PELITA</a>
+										<p">KUIH PELITA</p>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$399.99</span>
@@ -787,13 +802,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\tebu.jpg" alt="AIR TEBU">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">AIR TEBU</a>
+									<p>AIR TEBU</p>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$15.00</span>
@@ -825,7 +843,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\kelapa.jpg" alt="AIR KELAPA">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
@@ -833,7 +854,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">AIR KELAPA</a>
+										<p>AIR KELAPA</p>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$98.00</span>
@@ -865,7 +886,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<img src="..\bazaar\gambar\cendol.jpg" alt="CENDOL">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
+										<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
+											?>
 										</div>
 									</div>
 									<span class="product-new-top">New</span>
@@ -873,7 +897,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 								<div class="item-info-product ">
 									<h4>
-										<a href="single.html">CENDOL</a>
+									<?php
+												include('connection/connection.php');
+												echo "<a href='list.php?productid=".(oci_execute($result))."' >CENDOL</a>";
+											?>
 									</h4>
 									<div class="info-product-price">
 										<span class="item_price">$11.99</span>

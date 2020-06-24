@@ -5,13 +5,12 @@ if(isset($_GET['productid']))
 {
 	include("connection/connection.php");
 	$productid = $_GET['productid'];
-	//$foodid = $_GET['foodid'];
-
-	$sql = "SELECT * FROM PRODUCT  WHERE productid=$productid  ";
+	
+	$sql = "SELECT * FROM product  WHERE productid= $productid ";
 	$result = oci_parse($conn,$sql);
  	oci_execute($result);
-	$resultb = oci_fetch_assoc($result);
-	
+	$resultc = oci_fetch_assoc($result);
+
 	
 }
 ?>
@@ -451,7 +450,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<div class="banner-bootom-w3-agileits">
 		<div class="container">
 			<!-- tittle heading -->
-			<h3 class="tittle-w3l">Single Page
+			<h3 class="tittle-w3l">PRODUCT DETAILS
 				<span class="heading-style">
 					<i></i>
 					<i></i>
@@ -465,23 +464,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<ul class="slides">
 							<li data-thumb="images/si.jpg">
 								<div class="thumb-image">
-									<img src="images/si.jpg" data-imagezoom="true" class="img-responsive" alt=""> </div>
+									<img src="..\bazaar\gambar\karipap.jpg" data-imagezoom="true" class="img-responsive" alt=""> </div>
 							</li>
-							<li data-thumb="images/si2.jpg">
-								<div class="thumb-image">
-									<img src="images/si2.jpg" data-imagezoom="true" class="img-responsive" alt=""> </div>
-							</li>
-							<li data-thumb="images/si3.jpg">
-								<div class="thumb-image">
-									<img src="images/si3.jpg" data-imagezoom="true" class="img-responsive" alt=""> </div>
-							</li>
+						
 						</ul>
 						<div class="clearfix"></div>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-7 single-right-left simpleCart_shelfItem">
-				<h3>Zeeba Premium Basmati Rice - 5 KG</h3>
+				<h3>KARIPAP</h3>
 				<div class="rating1">
 					<span class="starRating">
 						<input id="rating5" type="radio" name="rating" value="5">
@@ -500,31 +492,32 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<form class="form-horizontal"  method="post" action = "list.php">
 						<div class="form-group">
 							<div class="col-sm-8">
-									<input type="hidden" name='productid' class="form-control slide-in-right" style="border-radius:5px;" id="PRODUCTID" value="<?php echo $resultb['PRODUCTID']; ?>" required>
+									<input type="hidden" name='PRODUCTID' class="form-control slide-in-right" style="border-radius:5px;" id="productid" value="<?php echo $resultc['PRODUCTID']; ?>" required>
 							</div>
 							<div class="col-sm-2"></div>
 						</div>
 						<div class="form-group">
 							<label for="focusedinput" class="col-sm-2 control-label">PRODUCT NAME</label>
 							<div class="col-sm-8">
-								<input type="text" name='P_NAME' class="form-control slide-in-left" style="border-radius:5px;" id="P_NAME"  value="<?php echo $resultb['P_NAME']; ?>" required>
+								<input type="text" name='P_NAME' class="form-control slide-in-left" style="border-radius:5px;" id="p_name"  value="<?php echo $resultc['P_NAME']; ?>" required>
 							</div>				
 							<div class="col-sm-2"></div>
 						</div>			
 						<div class="form-group">
 							<label for="focusedinput" class="col-sm-2 control-label">PRODUCT PRICE</label>
 							<div class="col-sm-8">
-								<input type="number" name='P_PRICE' class="form-control slide-in-right" style="border-radius:5px;" id="P_PRICE" value="<?php echo $resultb['P_PRICE']; ?>"  required>
+								<input type="number" name='P_PRICE' class="form-control slide-in-right" style="border-radius:5px;" id="p_price" value="<?php echo $resultc['P_PRICE']; ?>"  required>
 							</div>
 							<div class="col-sm-2"></div>			
 						</div>											
 						<div class="form-group">
 							<label for="focusedinput" class="col-sm-2 control-label">DETAILS</label>
 							<div class="col-sm-8">
-								<textarea rows="4" cols="50" type="text" name='P_DESC' class="form-control slide-in-right" style="border-radius:10px;" id="P_DESC" ><?php echo $resultb['P_DESC']; ?></textarea>
+								<textarea rows="4" cols="50" type="text" name='P_DESC' class="form-control slide-in-right" style="border-radius:10px;" id="p_desc" ><?php echo $resultc['P_DESC']; ?></textarea>
 							</div>
 							<div class="col-sm-2"></div>
-						</div>			
+						</div>		
+
 					</form>	
 				</div>					
 				<div class="occasion-cart">
