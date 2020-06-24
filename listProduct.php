@@ -8,7 +8,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <?php 
 
 	//include("pagesfunction/modalMessage.php");
-	include('connection.php');
+	include('connection/connection.php');
 	//include("encrypt_decrypt.php");
 	$sql = "SELECT * FROM product p
 	JOIN vendor v

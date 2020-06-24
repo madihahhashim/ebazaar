@@ -23,7 +23,7 @@
     
     if(isset($_POST['submit']))
     {
-	  include("connection.php");
+	  include("connection/connection.php");
 	  	
       $productID = $_POST['productID'];
       $p_name = $_POST['p_name'];
