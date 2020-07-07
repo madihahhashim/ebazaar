@@ -93,16 +93,16 @@
 		else
 		{
 			$query = "INSERT INTO product(productID, p_name, p_desc, p_price, vendorID)
-					 VALUES('$productID','$p_name','$p_desc','$p_price')";
+					 VALUES('$productID','$p_name','$p_desc','$p_price','$vendorID')";
 			/*$query1 = "INSERT INTO food(productID, f_spicylevel)
 					 VALUES('$productID','$f_spicylevel')";
 			$query2 = "INSERT INTO drink(productID, d_flavour, d_capacity)
 					 VALUES('$productID','$d_flavour', '$d_capacity')";*/
 			echo "INSERT INTO product(productID, p_name, p_desc, p_price, vendorID)
-			VALUES('$productID','$p_name','$p_desc','$p_price')";
+			VALUES('$productID','$p_name','$p_desc','$p_price','$vendorID')";
 		}
 		
-		if (!oci_parse($conn, $query) && oci_parse($conn, $query1) && oci_parse($conn,$query2)) 
+		if (!oci_parse($conn, $query)) 
 		{
 				echo "<script>
 			$(document).ready(function(){
