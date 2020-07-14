@@ -1,110 +1,59 @@
 <!DOCTYPE html>
 <?php	
-    function modalTitle($op)
-    {
-        if($op == 'success')
-            $title = 'Success!';
-        else
-            $title = 'Warning!';
     
-        return $title;
-    }
-    function modalMessage($op)
-    {
-        if($op == 'success')
-            $msg = 'Data has been saved.';
-        else if($op == 'errkod')
-            $msg = 'Data already exist. Please insert new data.';
-    
-        return $msg;
-    }
-    
+	/*session_start();
+	if(empty($_SESSION))
+	{
+		header('Location: index.php');
+	}*/
+
+	//include("modalMessage.php");
+
     if(isset($_POST['submit']))
     {
 		include("connection/connection.php");
-		$target_dir = "uploads/";
-		$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-		$uploadOk = 1;
-		$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
-		// Check if image file is a actual image or fake image
-		if(isset($_POST["submit"])) {
-			$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-			if($check !== false) {
-			echo "File is an image - " . $check["mime"] . ".";
-			$uploadOk = 1;
-			} else {
-			echo "File is not an image.";
-			$uploadOk = 0;
-			}
-		}
-
-		// Check if file already exists
-		if (file_exists($target_file)) {
-			echo "Sorry, file already exists.";
-			$uploadOk = 0;
-		}
-
-		// Check file size
-		if ($_FILES["fileToUpload"]["size"] > 500000) {
-			echo "Sorry, your file is too large.";
-			$uploadOk = 0;
-		}
-
-		// Allow certain file formats
-		if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
-			echo "Sorry, only JPG, JPEG & PNG files are allowed.";
-			$uploadOk = 0;
-		}
-
-		// Check if $uploadOk is set to 0 by an error
-		if ($uploadOk == 0) {
-			echo "Sorry, your file was not uploaded.";
-		// if everything is ok, try to upload file
-		} 
-		else {
-			if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-				echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
-			} 
-			else {
-				echo "Sorry, there was an error uploading your file.";
-			}
-		}
-
-		$productID = $_POST['productID'];
-		$p_name = $_POST['p_name'];
+		$productID = $_POST['PRODUCTID'];
+		$p_name = strtoupper($_POST['p_name']);
 		$p_desc = $_POST['p_desc'];
 		$p_price = $_POST['p_price'];
-		$vendorID = $_POST['vendorID']; 
+		$f_spicylevel = $_POST['f_spicylevel'];
+		$d_flavour = $_POST['d_flavour'];
+		$d_capacity = $_POST['d_capacity'];
+		//$vendorID = $_POST['VENDORID']; 
 		
 		$duplicate = "SELECT productID 
 		FROM product
 		WHERE productID = '$productID'";
-
 		$check = oci_parse($conn,$duplicate);
 		$checkrows = oci_num_rows($check);
-		//oci_execute($checkrows);
-
-		if ($checkrows > 0)
+		oci_execute($checkrows);
+		
+		if($checkrows > 0)
 		{
 			header("Location: addProduct.php?op=errkod");
 			return false;
 		}
-		else
-		{
-			$query = "INSERT INTO product(productID, p_name, p_desc, p_price, vendorID)
-					 VALUES('$productID','$p_name','$p_desc','$p_price','$vendorID')";
-			/*$query1 = "INSERT INTO food(productID, f_spicylevel)
-					 VALUES('$productID','$f_spicylevel')";
-			$query2 = "INSERT INTO drink(productID, d_flavour, d_capacity)
-					 VALUES('$productID','$d_flavour', '$d_capacity')";*/
-			echo "INSERT INTO product(productID, p_name, p_desc, p_price, vendorID)
-			VALUES('$productID','$p_name','$p_desc','$p_price','$vendorID')";
+		else{
+			$query = "INSERT INTO product(PRODUCTID, p_name, p_desc, p_price)
+				      VALUES($productID,'$p_name','$p_desc','$p_price')";
+			$result = oci_parse($conn, $query);
+			oci_execute($result);
+
+			$query1 = "INSERT INTO food(PRODUCTID, f_spicylevel)
+					   VALUES($productID,'$f_spicylevel')";
+			$result1 = oci_parse($conn, $query1);
+			oci_execute($result1);
+
+			$query2 = "INSERT INTO drink(PRODUCTID, d_flavour, d_capacity)
+					   VALUES($productID,'$d_flavour', '$d_capacity')";
+			$result2 = oci_parse($conn, $query2);
+			oci_execute($result2);
 		}
-		
-		if (!oci_parse($conn, $query)) 
+
+		if(!oci_parse($conn, $query) && !oci_parse($conn, $query1) && !oci_parse($conn, $query2)) 
 		{
-				echo "<script>
+			echo "<script>
 			$(document).ready(function(){
 				$('#myModal').modal('show');
 			});
@@ -122,8 +71,56 @@
 		
 			header("Location: addProduct.php?op=success");
 		}
-		oci_close();
 		//echo $query;
+		//-To upload picture of product-
+		$target_dir = "uploads/";
+		$target_file = $target_dir . basename($_FILES["listProduct"]["name"]);
+		$uploadOk = 1;
+		$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+		// Check if image file is a actual image or fake image
+		if(isset($_POST["submit"])) {
+			$check = getimagesize($_FILES["listProduct"]["tmp_name"]);
+			if($check !== false) {
+			echo "File is an image - " . $check["mime"] . ".";
+			$uploadOk = 1;
+			} else {
+			echo "File is not an image.";
+			$uploadOk = 0;
+			}
+		}
+
+		// Check if file already exists
+		if (file_exists($target_file)) {
+			echo "Sorry, file already exists.";
+			$uploadOk = 0;
+		}
+
+		// Check file size
+		if ($_FILES["listProduct"]["size"] > 500000) {
+			echo "Sorry, your file is too large.";
+			$uploadOk = 0;
+		}
+
+		// Allow certain file formats
+		if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+			echo "Sorry, only JPG, JPEG & PNG files are allowed.";
+			$uploadOk = 0;
+		}
+
+		// Check if $uploadOk is set to 0 by an error
+		if ($uploadOk == 0) {
+			echo "Sorry, your file was not uploaded.";
+		// if everything is ok, try to upload file
+		} 
+		else {
+			if (move_uploaded_file($_FILES["listProduct"]["tmp_name"], $target_file)) {
+				echo "The file ". basename( $_FILES["listProduct"]["name"]). " has been uploaded.";
+			} 
+			else {
+				echo "Sorry, there was an error uploading your file.";
+			}
+		}
     }    
 ?>
 <html lang="en">
@@ -208,6 +205,9 @@
 						<a href="#" data-toggle="modal" data-target="#myModal2">
 							<span class="fa fa-pencil-square-o" aria-hidden="true"></span> Sign Up </a>
 					</li>
+					<li>
+						<!--<span class="text">Hi <php echo $_SESSION['v_firstname'];?></span>-->
+					<li>
 				</ul>
 				<!-- //header lists -->
 				<!-- search -->
@@ -382,10 +382,10 @@
 											<div class="col-sm-4 multi-gd-img">
 												<ul class="multi-column-dropdown">
                                                     <li>
-														<a href="food.php">Foods</a>
+														<a href="addProduct.php">Add Product</a>
 													</li>
 													<li>
-														<a href="drink.php">Drinks</a>
+														<a href="listProduct.php">List of Product</a>
 													</li>
 												</ul>
 											</div>
@@ -447,37 +447,39 @@
 				<div class="new-productInfo">
 					<form method="post" action="addProduct.php" enctype="multipart/form-data">
 						<div class="form-group">
-							<input type="number" name="productID" placeholder="Product ID" required>
+							<input type="number" min="100" max="999999" name="PRODUCTID" placeholder="Product ID" required="">
 						</div>
 						<div class="form-group">
-							<input type="text" name="p_name" placeholder="Product Name" required>
+							<input type="text" name="p_name" placeholder="Product Name" required="">
 						</div>
 						<div class="form-group">
 							<textarea type="text" name="p_desc" placeholder="Product Description"></textarea>
 						</div>
 						<div class="form-group">
-							<input type="number" name="p_price" placeholder="Product Price (RM)" required>
+							<input type="number" name="p_price" placeholder="Product Price (RM)" required="">
 						</div>
 						<div class="form-group">
-							<select class="select2 form-control custom-select"  placeholder="Vendor's Name" name="vendorID">
-								<?php
-									include("connection/connection.php");
-									$sql ="SELECT * FROM vendor";
-									$qry = oci_parse($conn, $sql);
-									$row = oci_num_rows($qry);
-									if($row > 0)
-									{
-										while($r = oci_fetch_assoc($qry))
-										{
-											echo "<option value='".$r['vendorID']."'>".$r['v_name']." </option>";
-										}
-									}
-								?>
-							</select>
+							<p>Select image to upload:</p>
+							<input type="file" name="listProduct">
 						</div>
 						<div class="form-group">
-							Select image to upload:
-							<input type="file" name="fileToUpload" id="fileToUpload">
+							<p>Choose Spicy Level (Food):</p>
+							<input type="radio" id="Original" name="f_spicylevel" value="Original">
+  							<label for="Original">Original</label><br>
+							<input type="radio" id="Medium" name="f_spicylevel" value="Medium">
+  							<label for="Medium">Medium</label><br>
+							<input type="radio" id="Hot" name="f_spicylevel" value="Hot">
+  							<label for="Hot">Hot</label><br>
+						</div>
+						<div class="form-group">
+							<input type="text" name="d_flavour" placeholder="Flavour (Drink)">
+						</div>
+						<div class="form-group">
+							<p>Choose Cup Size (Drink):</p>
+							<input type="radio" id="Medium" name="d_capacity" value="Medium">
+  							<label for="Medium">Medium</label><br>
+							<input type="radio" id="Large" name="d_capacity" value="Large">
+  							<label for="Large">Large</label><br>
 						</div>
 						<div class="form-group">
 							<input type="submit" id="btnsubmit" name="submit" value="Submit"/>
@@ -511,38 +513,6 @@
 	<!-- footer -->
 	<footer>
 		<div class="container">
-			<!-- footer second section -->
-			<div class="w3l-grids-footer">
-				<div class="col-xs-4 offer-footer">
-					<div class="col-xs-4 icon-fot">
-						<span class="fa fa-map-marker" aria-hidden="true"></span>
-					</div>
-					<div class="col-xs-8 text-form-footer">
-						<h3>Track Your Order</h3>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-				<div class="col-xs-4 offer-footer">
-					<div class="col-xs-4 icon-fot">
-						<span class="fa fa-refresh" aria-hidden="true"></span>
-					</div>
-					<div class="col-xs-8 text-form-footer">
-						<h3>Free & Easy Returns</h3>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-				<div class="col-xs-4 offer-footer">
-					<div class="col-xs-4 icon-fot">
-						<span class="fa fa-times" aria-hidden="true"></span>
-					</div>
-					<div class="col-xs-8 text-form-footer">
-						<h3>Online cancellation </h3>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-				<div class="clearfix"></div>
-			</div>
-			<!-- //footer second section -->
 			<!-- footer third section -->
 			<div class="footer-info w3-agileits-info">
 				<!-- footer categories -->
@@ -650,7 +620,7 @@
 			}
 
 			if (total < 3) {
-				alert('The minimum order quantity is 3. Please add more to your shopping cart before checking out');
+				alert('The minimum order quantity is 1. Please add more to your shopping cart before checking out');
 				evt.preventDefault();
 			}
 		});
