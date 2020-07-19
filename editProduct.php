@@ -1,210 +1,139 @@
 <!DOCTYPE html>
-<?php	
-    session_start();
+<?php 
+	session_start();
 	if(empty($_SESSION))
 	{
 		header('Location: index.php');
 	}
-	include("connection/connection.php");
+	//include(modalMessage.php);
+	if(isset($_GET['productID']))
+	{
+		include('connection/connection.php');
+		//include('encrypt_decrypt.php');
+		//urlencode(secured_decrypt)
+		$productID = $_GET['PRODUCTID'];
+		$sql = "SELECT p_name, p_desc, p_price FROM product WHERE PRODUCTID = '$productID'";
+		$qry = oci_parse($conn,$sql);
+		$result = oci_fetch_array($qry);
 
-    if(isset($_POST['submit']))
-    {
+		//oci_execute($qry,OCI_DEFAULT);
+	}
+
+	if(isset($_POST['save']))
+	{
+		include('connection/connection.php');
+
 		$p_name = strtoupper($_POST['p_name']);
 		$p_desc = strtoupper($_POST['p_desc']);
 		$p_price = $_POST['p_price'];
-		$vendorID = $_POST['vendorID'];
-		$productID = strtoupper($_POST['PRODUCTID']);
+		$productID = strtoupper($_POST['productID']);
 		$f_spicylevel = strtoupper($_POST['f_spicylevel']);
 		$d_flavour = strtoupper($_POST['d_flavour']);
 		$d_capacity = strtoupper($_POST['d_capacity']);
 
-		//to check duplicate ID
-		$duplicate = "SELECT productID FROM product WHERE productID = $productID";
-		$check = oci_parse($conn, $duplicate);
-		oci_execute($check);
-		$checkrows = oci_fetch_array($check);
-		
-		//to insert data if row is null
-		if($checkrows == 0)
+		$sql = "UPDATE product 
+				SET p_name = '$p_name', p_desc = '$p_desc', p_price = '$p_price' 
+				WHERE productID = '$productID'";
+		$query2 = oci_parse($conn, $sql2);
+		oci_execute($query2, OCI_DEFAULT);
+
+		$sql1 = "UPDATE food 
+				SET f_spicylevel = '$f_spicylevel' 
+				WHERE productID = '$productID'";
+		$query2 = oci_parse($conn, $sql2);
+		oci_execute($query2, OCI_DEFAULT);
+
+		$sql2 = "UPDATE drink 
+				SET d_flavour = '$d_flavour', d_capacity = '$d_capacity' 
+				WHERE productID = '$productID'";
+		$query2 = oci_parse($conn, $sql2);
+		oci_execute($query2, OCI_DEFAULT);
+		//echo $query;
+		if (oci_execute($query, OCI_DEFAULT) && oci_execute($query1, OCI_DEFAULT) && oci_execute($query2, OCI_DEFAULT)) 
 		{
-			$sql = "INSERT INTO product(p_name, p_desc, p_price, productID)
-				    VALUES('$p_name','$p_desc','$p_price','$productID')";
-			echo $sql;
-			$result = oci_parse($conn, $sql);
-			oci_execute($result);
-
-			$sql1 = "INSERT INTO food(f_spicylevel, productID)
-					VALUES('$f_spicylevel','$productID')";
-			echo $sql1;
-			$result1 = oci_parse($conn, $sql1);
-			oci_execute($result1);
-			
-			$sql2 = "INSERT INTO drink(d_flavour, d_capacity, productID)
-					VALUES('$d_flavour','$d_capacity','$productID')";
-			echo $sql2;
-			$result2 = oci_parse($conn, $sql2);
-			oci_execute($result2);
-
-			echo "<script language='javascript'> alert('Data has been successfully inserted!');window.location='addProduct.php';</script>";
-		}
-		else
-		{
-			echo "<script language = 'javascript'>
-			alert ('Data already existed. Please insert new data.');
-			window.location='addProduct.php';
-			</script>";
-			header("Location: addProduct.php?op=errkod");
-			//return false;
-		}
-
-		/*if(oci_parse($conn, $query) && oci_parse($conn, $query1) && oci_parse($conn, $query2)) 
-		{	
-			echo "<script>
-			$(document).ready(function(){
-			$('#myModal').modal('show');
-			});
-			</script>";
-			header("Location: addProduct.php?op=success");
+			oci_commit($conn);
+			echo "<script language='javascript'> alert('Data has been successfully updated!');window.location='listProduct.php';</script>";
 		} 
 		else 
 		{
-			echo "<script>
-			$(document).ready(function(){
-				$('#myModal').modal('show');
-			});
-				</script>";
-			header("Location: addProduct.php?op=errkod");
-		}*/
-		//-To upload picture of product-
-		$target_dir = "uploads/";
-		$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-		$uploadOk = 1;
-		$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-		// Check if image file is a actual image or fake image
-		if(isset($_POST["submit"])) {
-			$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-			if($check !== false) {
-				echo "File is an image - " . $check["mime"] . ".";
-				$uploadOk = 1;
-			} 
-			else {
-				echo "File is not an image.";
-				$uploadOk = 0;
-			}
+			oci_rollback($conn);
+			echo "<script language='javascript'> alert('Sorry, data has not been updated.');window.location='listProduct.php';</script>";
 		}
+	}
+	else if(isset($_POST['delete']))
+	{
+		include('connection/connection.php');
 
-		// Check if file already exists
-		if (file_exists($target_file)) {
-			echo "Sorry, file already exists.";
-			$uploadOk = 0;
-		}
+		$p_name = strtoupper($_POST['p_name']);
+		$p_desc = strtoupper($_POST['p_desc']);
+		$p_price = $_POST['p_price'];
+		$productID = strtoupper($_POST['productID']);
+		$f_spicylevel = strtoupper($_POST['f_spicylevel']);
+		$d_flavour = strtoupper($_POST['d_flavour']);
+		$d_capacity = strtoupper($_POST['d_capacity']);
 
-		// Check file size
-		if ($_FILES["fileToUpload"]["size"] > 500000) {
-			echo "Sorry, your file is too large.";
-			$uploadOk = 0;
-		}
+		$sql = "DELETE FROM product WHERE productID = $productID";
+		$query = oci_parse($conn, $sql);
+		oci_execute($query, OCI_DEFAULT); 
 
-		// Allow certain file formats
-		if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
-			echo "Sorry, only JPG, JPEG & PNG files are allowed.";
-			$uploadOk = 0;
-		}
+		$sql1 = "DELETE FROM food WHERE productID = $productID";
+		$query1 = oci_parse($conn, $sql1);
+		oci_execute($query1, OCI_DEFAULT);
 
-		// Check if $uploadOk is set to 0 by an error
-		if ($uploadOk == 0) {
-			echo "Sorry, your file was not uploaded.";
-		// if everything is ok, try to upload file
+		$sql2 = "DELETE FROM drink WHERE productID = $productID";
+		$query2 = oci_parse($conn, $sql2);
+		oci_execute($query2, OCI_DEFAULT);
+		//echo $query;
+		if (oci_execute($query, OCI_DEFAULT) && oci_execute($query1, OCI_DEFAULT) && oci_execute($query2, OCI_DEFAULT)) 
+		{
+			oci_commit($conn);
+			echo "<script language='javascript'> alert('Data has been successfully deleted!');window.location='listProduct.php';</script>";
 		} 
-		else {
-			if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-				echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
-			} 
-			else {
-				echo "Sorry, there was an error uploading your file.";
-			}
+		else 
+		{
+			oci_rollback($conn);
+			echo "<script language='javascript'> alert('Sorry, data has not been deleted.');window.location='listProduct.php';</script>";
 		}
-	}    
-
-	//modal message
-	function modalTitle($op)
-	{
-		if($op == 'success')
-			$title = 'Success!';
-		else
-			$title = 'Warning!';
-
-		return $title;
 	}
-	function modalMessage($op)
-	{
-		if($op == 'success')
-			$msg = 'Data has been successfully save.';
-		else if($op == 'errkod')
-			$msg = 'Data is already exist. Please insert other data.';
 
-		return $msg;
-	}
 ?>
 <html lang="en">
-<head>
-    <title>eBazaar-Add Product</title>
-    <!--/tags -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="keywords" content="Grocery Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-    Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-    <script>
-        addEventListener("load", function () {
-            setTimeout(hideURLbar, 0);
-        }, false);
 
-        function hideURLbar() {
-            window.scrollTo(0, 1);
-        }
+<head>
+	<title>eBazaar-Edit Product</title>
+	<!--/tags -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="Grocery Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+ 	Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+	<script>
+		addEventListener("load", function () {
+			setTimeout(hideURLbar, 0);
+		}, false);
+
+		function hideURLbar() {
+			window.scrollTo(0, 1);
+		}
 	</script>
-    <!--<script language="javascript">
-        function checkic()
-        {
-            var found = false;
-            var ic = document.login.icno.value;
-            if(ic =="")
-            {
-                alert("Please enter your ic no!");
-                found = true;
-            }
-            return found;
-            //alert(ic);
-        }
-    </script>-->
-    <script src="vendor/jquery/jquery.min.js"></script>
     <script type='text/javascript'>
-	<?php if(isset($_GET['op'])) { ?>
-		var document;
-		$(document).ready(function(){
-			$('#myModal').modal('show');
-		});
-	<?php } ?>
-    </script>
-	<script type='text/javascript'>
         function Confirm() 
 		{
         	return confirm('Are you sure you want to continue this process?');
         }
     </script>
-    <!--//tags -->
-    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-    <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-    <link href="css/font-awesome.css" rel="stylesheet">
-    <!--pop-up-box-->
-    <link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all" />
-    <!--//pop-up-box-->
-    <!-- price range -->
-    <link rel="stylesheet" type="text/css" href="css/jquery-ui1.css">
-    <!-- fonts -->
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800" rel="stylesheet">
+	<!--//tags -->
+	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+	<link href="css/font-awesome.css" rel="stylesheet">
+	<!--pop-up-box-->
+	<link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all" />
+	<!--//pop-up-box-->
+	<!-- price range -->
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui1.css">
+	<!-- fonts -->
+	<link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800" rel="stylesheet">
 </head>
+
 <body>
 	<!-- top-header -->
 	<div class="header-most-top">
@@ -243,7 +172,6 @@
 							<span class="glyphicon glyphicon-log-out"></span>Logout
 						</a>
 					<li>
-					<span class="text" styl="color:black;" ><?php echo "Hi ".$_SESSION["v_firstname"];?></span>
 				</ul>
 				<!-- //header lists -->
 				<!-- search -->
@@ -417,7 +345,7 @@
 										<div class="agile_inner_drop_nav_info">
 											<div class="col-sm-4 multi-gd-img">
 												<ul class="multi-column-dropdown">
-                                                    <li>
+													<li>
 														<a href="addProduct.php">Add Product</a>
 													</li>
 													<li>
@@ -448,19 +376,24 @@
 	<!-- //navigation -->
 	<!-- banner-2 -->
 	<div class="page-head_agile_info_w3l">
-
+		
 	</div>
 	<!-- //banner-2 -->
+	<!--Table for slider-->
+	<!--<table>
+		<img class="mySlides" src="images\ramadan-kareem-1.jpg" style="width:100%">
+	</table>-->
+	<!--//Table for slider-->
 	<!-- page -->
 	<div class="services-breadcrumb">
 		<div class="agile_inner_breadcrumb">
 			<div class="container">
 				<ul class="w3_short">
 					<li>
-						<a href="index.php">Home</a>
+						<a href="index.html">Home</a>
 						<i>|</i>
 					</li>
-					<li>Add New Product</li>
+					<li>Update List Product</li>
 				</ul>
 			</div>
 		</div>
@@ -470,7 +403,7 @@
 	<div class="ads-grid">
 		<div class="container">
 			<!-- tittle heading -->
-			<h3 class="tittle-w3l">Add New Product
+			<h3 class="tittle-w3l">Update List Product
 				<span class="heading-style">
 					<i></i>
 					<i></i>
@@ -478,106 +411,78 @@
 				</span>
 			</h3>
 			<!-- //tittle heading -->
-			<!-- product left -->
 			<div class="new product">
 				<div class="new-productInfo">
-					<form method="post" action="addProduct.php" enctype="multipart/form-data">
-						<div class="form-group">
-							<p>Vendor's Name</p>
-							<select class="select2 form-control custom-select"  placeholder="Vendor's Name" name="VENDORID">
-								<?php
-									//include("connection/connection.php");
-									$sql ="SELECT * FROM vendor";
-									$qry = oci_parse($conn, $sql);
-									oci_execute($qry);
+					<form name="updateProduct" method="post" action="">
+						<?php
+							include ('connection/connection.php');
 
-									while($row = oci_fetch_array($qry, OCI_RETURN_NULLS+OCI_ASSOC))
-									{
-										echo "<option value='".$r['VENDORID']."'>".$r['V_FIRSTNAME']." </option>";
-									}
-								?>
-							</select>
-						</div>
-						<div class="form-group">
-							<p>Choose Category:</p>
-							<input type="radio" id="Food" name="productID" value="Food">
-  							<label for="Food">Food</label><br>
-							<input type="radio" id="Drink" name="productID" value="Drink">
-							<label for="Drink">Drink</label><br>
-								<?php 
-									$productID = " ";
-							  		$random = mt_rand(1000,9999);
-								 	if($productID=="Food")
-										$productID = "F".$random;
-									else
-										$productID = "D".$random;
-								?>
-							<input type="hidden" name="PRODUCTID" placeholder="Product ID" value="<?php echo $productID;?>" readonly>
-						</div>
-						<div class="form-group">
-							<input type="text" name="p_name" placeholder="Product Name" required="">
-						</div>
-						<div class="form-group">
-							<textarea type="text" name="p_desc" placeholder="Product Description" pattern="^[a-zA-Z]+$" title="Description should contain letters only . e.g. Lemang Tok Wan"></textarea>
-						</div>
-						<div class="form-group">
-							<input type="number" name="p_price" placeholder="Product Price (RM)" required="">
-						</div>
-						<div class="form-group">
-							<p>Select image to upload:</p>
-							<input type="file" name="fileToUpload" id="fileToUpload">
-						</div>
-						<strong>If product is food type please key in form below:</strong></br>
-						<div class="form-group">
-							<p>Choose Spicy Level (Food):</p>
-							<input type="radio" id="Original" name="f_spicylevel" value="Original">
-  							<label for="Original">Original</label><br>
-							<input type="radio" id="Medium" name="f_spicylevel" value="Medium">
-  							<label for="Medium">Medium</label><br>
-							<input type="radio" id="Hot" name="f_spicylevel" value="Hot">
-  							<label for="Hot">Hot</label><br>
-						</div>
-						<strong>If product is drink type please key in form below:</strong>
-						</br>
-						<div class="form-group">
-							<input type="text" name="d_flavour" placeholder="Flavour (Drink)">
-						</div>
-						<div class="form-group">
-							<p>Choose Cup Size (Drink):</p>
-							<input type="radio" id="Medium" name="d_capacity" value="Medium">
-  							<label for="Medium">Medium</label><br>
-							<input type="radio" id="Large" name="d_capacity" value="Large">
-  							<label for="Large">Large</label><br>
-						</div>
-						<div class="form-group">
-							<input type="submit" id="btnsubmit" name="submit" value="Submit" onclick="return Confirm()"/>
-						</div>
+							$sqlS = "SELECT p_name, p_desc, p_price
+									 FROM product WHERE productID = '".$_GET["PRODUCTID"]."'";
+							$queryP = oci_parse($conn, $sqlS);
+							$r = oci_execute($queryP);
+							$p = oci_fetch_array($queryP);
+							
+							$sqlF = "SELECT f_spicylevel
+									 FROM food WHERE productID = '".$_GET["PRODUCTID"]."'";
+							$queryF = oci_parse($conn, $sqlF);
+							$r1 = oci_execute($queryF);
+							$f = oci_fetch_array($queryF);
+
+							$sqlD = "SELECT d_flavour, d_capacity 
+									FROM drink WHERE productID = '".$_GET["PRODUCTID"]."'";
+							$queryD = oci_parse($conn, $sqlD);
+							$r2 = oci_execute($queryD);
+							$d = oci_fetch_array($queryD);
+
+							if(!$p && !$f & !$d){
+								echo "Selected data not found";
+							}
+							else{
+
+							}
+						?>
+							<div class="form-group">
+								<input type="hidden" name="productID" placeholder="Product ID" value="<?php echo $r['PRODUCTID'];?>" required>
+							</div>
+							<div class="form-group">
+								<input type="text" name="p_name" placeholder="Product Name" value="<?php echo $r['P_NAME'];?>" required>
+							</div>
+							<div class="form-group">
+								<textarea type="text" name="p_desc" placeholder="Product Description" value="<?php echo $r['P_DESC'];?>"></textarea>
+							</div>
+							<div class="form-group">
+								<input type="number" name="p_price" placeholder="Product Price (RM)" value="<?php echo $r['P_PRICE'];?>" required>
+							</div>
+							<div class="form-group">
+								<p>Choose Spicy Level (Food):</p>
+								<input type="radio" id="Original" name="f_spicylevel" value="<?php if($f_spicylevel=="Original") echo "checked";?>">
+								<label for="Original">Original</label><br>
+								<input type="radio" id="Medium" name="f_spicylevel" value="<?php if($f_spicylevel=="Medium") echo "checked";?>">
+								<label for="Medium">Medium</label><br>
+								<input type="radio" id="Hot" name="f_spicylevel" value="<?php if($f_spicylevel=="Hot") echo "checked";?>">
+								<label for="Hot">Hot</label><br>
+							</div>
+							<div class="form-group">
+								<input type="text" name="d_flavour" placeholder="Flavour (Drink)" value="<?php echo $r2['D_FLVAOUR'];?>">
+							</div>
+							<div class="form-group">
+								<p>Choose Cup Size (Drink):</p>
+								<input type="radio" id="Medium" name="d_capacity" value="<?php if($d_capacity=="Medium") echo "checked";?>">
+								<label for="Medium">Medium</label><br>
+								<input type="radio" id="Large" name="d_capacity" value="<?php if($d_capacity=="Large") echo "checked";?>">
+								<label for="Large">Large</label><br>
+							</div>
+							<div class="form-group">
+								<input type="submit" name="save" value="Update" onclick="return Confirm()"/>
+								<input type="submit" name="delete" value="Delete" onclick="return Confirm()"/>
+							</div>
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- //top products -->
-	<!-- display successful modal -->
-	<div id="myModal" class="modal fade">
-		<div class="modal-dialog modal-sm">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">
-						<?php if(isset($_GET['op'])) { echo modalTitle($_GET['op']); } ?>
-					</h4>
-				</div>
-				<div class="modal-body">
-					<p><?php if(isset($_GET['op'])) { echo modalMessage($_GET['op'], $_GET['tot'], $_GET['ins'], $_GET['upd']); } ?></p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end modal -->
 	<!-- footer -->
 	<footer>
 		<div class="container">
@@ -645,21 +550,8 @@
 	<!-- js-files -->
 	<!-- jquery -->
 	<script src="js/jquery-2.1.4.min.js"></script>
-	<!--Function to generate product ID-->
-	<script>
-		function generateId(){
-			var random = mt_rand(1000, 9999);
-			var result = " " + random;
-			var id = document.getElementById("category").value;
-			if(id=="Food"){
-				result = "F" + random;
-			}
-			else{
-				result = "D" + random;
-			}
-		}
-	</script>
 	<!-- //jquery -->
+
 	<!-- popup modal (for signin & signup)-->
 	<script src="js/jquery.magnific-popup.js"></script>
 	<script>
@@ -679,9 +571,9 @@
 		});
 	</script>
 	<!-- Large modal -->
-	<script>
+	<!-- <script>
 		$('#').modal('show');
-	</script> 
+	</script> -->
 	<!-- //popup modal (for signin & signup)-->
 
 	<!-- cart-js -->
@@ -709,7 +601,7 @@
 	<!-- //cart-js -->
 
 	<!-- price range (top products) -->
-	<script src="js/jquery-ui.js"></script>
+	<!--<script src="js/jquery-ui.js"></script>
 	<script>
 		//<![CDATA[ 
 		$(window).load(function () {
@@ -725,11 +617,11 @@
 			$("#amount").val("$" + $("#slider-range").slider("values", 0) + " - $" + $("#slider-range").slider("values", 1));
 
 		}); //]]>
-	</script>
+	</script>-->
 	<!-- //price range (top products) -->
 
 	<!-- flexisel (for special offers) -->
-	<script src="js/jquery.flexisel.js"></script>
+	<!--<script src="js/jquery.flexisel.js"></script>
 	<script>
 		$(window).load(function () {
 			$("#flexiselDemo1").flexisel({
@@ -756,7 +648,7 @@
 			});
 
 		});
-	</script>
+	</script>-->
 	<!-- //flexisel (for special offers) -->
 
 	<!-- password-script -->
@@ -823,4 +715,5 @@
 	<!-- //js-files -->
 
 </body>
+
 </html>
