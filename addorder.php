@@ -1,20 +1,6 @@
 <!DOCTYPE html>
 <?php
 
-
-
-if(isset($_GET['ORDERID']))
-{
-  include("connection/connection.php");
-  include("secure/encrypt_decrypt.php");
-  $ORDERID = urldecode(secured_decrypt($_GET['ORDERID']));
-  //echo $ORDERID;
-  $sql = "SELECT * FROM orders WHERE ORDERID = $ORDERID";
-  //echo $sql;
-  $result4 = oci_parse($conn, $sql);
-	 oci_execute($result4);
-}
-
 function modalTitle($op)
 {
 	if($op == 'success')
@@ -41,22 +27,19 @@ if(isset($_POST['submit']))
   
   $O_TOTALPRICE =$_POST['O_TOTALPRICE'];
   $PRODUCTID =$_POST['PRODUCTID'];
-  //$c_city = $_POST['c_city'];
   
-  $biggest_id= oci_parse($conn, "SELECT ORDERID FROM orders");
-  oci_execute($biggest_id);
-  while($row = oci_fetch_array($biggest_id)){
-   $id = $row['ORDERID'];
-  
-  }
+  $biggest_id2= oci_parse($conn, "SELECT CUSTID FROM customer");
+	oci_execute($biggest_id2);
+	while($row2 = oci_fetch_array($biggest_id2)){
+	$id2 = $row2['CUSTID'];
+	 }
 
-  $query =  "UPDATE orders SET  PRODUCTID = '".$PRODUCTID."',O_TOTALPRICE =  '".$O_TOTALPRICE."'WHERE ORDERID = '".$id."'";
-	//echo $query;
-	$result = oci_parse($conn, $query);
-	 oci_execute($result);
+  $qry = "INSERT INTO orders(ORDERID, O_DATE, O_TIME,  O_TOTALPRICE, O_STATUS, ADMINID, CUSTID, PRODUCTID)VALUES(orderid_seq.NEXTVAL, sysdate, sysdate,  '".$O_TOTALPRICE."', 'PENDING', 1,'".$id2."', '".$PRODUCTID."' )";
+	$result7 = oci_parse($conn, $qry);
+	 oci_execute($result7);
 
 
-	 if (!$result) 
+	 if (!$result7) 
 	{
 	echo "<script>
 	$(document).ready(function(){
@@ -64,7 +47,7 @@ if(isset($_POST['submit']))
 	});
 		</script>";
 
-	header("Location: kuantan.php?op=errkod");
+	header("Location: addorder.php?op=errkod");
 	} 
 	else 
 	{
@@ -74,8 +57,9 @@ if(isset($_POST['submit']))
 	});
 		</script>";
 
-	header("Location: kuantan.php?op=success");
+	header("Location: addorder.php?op=success");
 	}
+	
 
 }
 
@@ -513,13 +497,9 @@ function Confirm() {
 	<!-- banner -->
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
 		<!-- Indicators-->
-		<ol class="carousel-indicators">
-			<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-			<li data-target="#myCarousel" data-slide-to="1" class=""></li>
-			<li data-target="#myCarousel" data-slide-to="2" class=""></li>
-			<li data-target="#myCarousel" data-slide-to="3" class=""></li>
-		</ol>
+	
 		<div class="carousel-inner" role="listbox">
+		<form action="addorder.php" method="post">
 			<div class="item active">
 				<div class="container">
 					<div class="carousel-caption">
@@ -528,47 +508,12 @@ function Confirm() {
 						</h3>
 						<p>Get flat
 							<span>10%</span> Cashback</p>
-							<a class="button2" href="addorder.php">Add more food </a>
+						<a class="button" type="submit" name="add">Add more food </a>
 					</div>
 				</div>
 			</div>
-			<div class="item item2">
-				<div class="container">
-					<div class="carousel-caption">
-						<h3>Healthy
-							<span>Saving</span>
-						</h3>
-						<p>Get Upto
-							<span>30%</span> Off</p>
-						<a class="button2" href="addorder.php">Add more food </a>
-					</div>
-				</div>
-			</div>
-			<div class="item item3">
-				<div class="container">
-					<div class="carousel-caption">
-						<h3>Big
-							<span>Deal</span>
-						</h3>
-						<p>Get Best Offer Upto
-							<span>20%</span>
-						</p>
-						<a class="button2" href="addorder.php">Add more food </a>
-					</div>
-				</div>
-			</div>
-			<div class="item item4">
-				<div class="container">
-					<div class="carousel-caption">
-						<h3>Today
-							<span>Discount</span>
-						</h3>
-						<p>Get Now
-							<span>40%</span> Discount</p>
-							<a class="button2" href="addorder.php">Add more food </a>
-					</div>
-				</div>
-			</div>
+			
+			<form>
 		</div>
 		<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
 			<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -613,11 +558,15 @@ function Confirm() {
 										<p>MURTABAK</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">4.00</span>
-										
+										<span class="item_price">$149.00</span>
+										<del>$280.00</del>
 									</div>
 									<div class="rating1">
 										<span class="starRating">
+											<input id="rating5" type="radio" name="rating" value="5">
+											<label for="rating5">5</label>
+											<input id="rating4" type="radio" name="rating" value="4">
+											<label for="rating4">4</label>
 											<input id="rating3" type="radio" name="rating" value="3" checked="">
 											<label for="rating3">3</label>
 											<input id="rating2" type="radio" name="rating" value="2">
@@ -627,12 +576,20 @@ function Confirm() {
 										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="kuantan.php" method="post">
+										<form action="addorder.php" method="post">
 											<fieldset>
-												<input type="hidden" name="PRODUCTID" value="F94852" />
+												
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												
+												<input type="hidden" name="PRODUCTID" value="1" />
 												<input type="hidden" name="P_NAME" value=" MURTABAK" />
-												<input type="hidden" name="O_TOTALPRICE" value="4.00" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="O_TOTALPRICE" value="149.00" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -652,11 +609,15 @@ function Confirm() {
 										<p>SATAY</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">20.00</span>
-										
+										<span class="item_price">$200.00</span>
+										<del>$420.00</del>
 									</div>
 									<div >
 										<span class="starRating">
+											
+											<label for="rating4">4</label>
+											<input id="rating3" type="radio" name="rating" value="3" checked>
+											<label for="rating3">3</label>
 											<input id="rating2" type="radio" name="rating" value="2">
 											<label for="rating2">2</label>
 											<input id="rating1" type="radio" name="rating" value="1">
@@ -664,11 +625,17 @@ function Confirm() {
 										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="kuantan.php" method="post">
+									<form action="addorder.php" method="post">
 											<fieldset>
-											    <input type="hidden" name="PRODUCTID" value="F34587" />	
-											    <input type="hidden" name="P_NAME" value=" SATAY" />
-												<input type="hidden" name="O_TOTALPRICE" value="20.00" />
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												<input type="hidden" name="business" value=" " />
+												<input type="hidden" name="PRODUCTID" value="SATAY" />
+												<input type="hidden" name="O_TOTALPRICE" value="200.00" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
 												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
@@ -689,8 +656,8 @@ function Confirm() {
 										<p>LEMANG</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">10.00</span>
-										
+										<span class="item_price">$520.99</span>
+										<del>$600.99</del>
 									</div>
 								<div class="rating1">
 										<span class="starRating">
@@ -707,12 +674,18 @@ function Confirm() {
 										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="kuantan.php" method="post">
+									<form action="addorder.php" method="post">
 											<fieldset>
-											<input type="hidden" name="PRODUCTID" value="F78799" />
-												<input type="hidden" name="P_NAME" value=" LEMANG" />
-												<input type="hidden" name="O_TOTALPRICE" value="10.00" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												<input type="hidden" name="business" value=" " />
+												<input type="hidden" name="PRODUCTID" value="LEMANG" />
+												<input type="hidden" name="O_TOTALPRICE" value="2.00" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -740,11 +713,17 @@ function Confirm() {
 										
 									</h4>
 									<div class="info-product-price">
-									<span class="item_price">3.00</span>
-										
+										<span class="item_price">$78.00</span>
+										<del>$110.00</del>
 									</div>
 									<div class="rating1">
 										<span class="starRating">
+											<input id="rating5" type="radio" name="rating" value="5">
+											<label for="rating5">5</label>
+											<input id="rating4" type="radio" name="rating" value="4">
+											<label for="rating4">4</label>
+											<input id="rating3" type="radio" name="rating" value="3" checked="">
+											<label for="rating3">3</label>
 											<input id="rating2" type="radio" name="rating" value="2">
 											<label for="rating2">2</label>
 											<input id="rating1" type="radio" name="rating" value="1">
@@ -752,12 +731,19 @@ function Confirm() {
 										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="kuantan.php" method="post">
+									<form action="addorder.php" method="post">
 											<fieldset>
-											<input type="hidden" name="PRODUCTID" value="F59533" />
-												<input type="hidden" name="P_NAME" value=" KARIPAP" />
-												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												
+												<input type="hidden" name="PRODUCTID" value="F0002" />
+												<input type="hidden" name="P_NAME" value="KARIPAP " />
+												<input type="hidden" name="O_TOTALPRICE" value="78.00" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -777,16 +763,22 @@ function Confirm() {
 										<p>DONUT</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">3.00</span>
-									
+										<span class="item_price">$130.00</span>
+										<del>$150.00</del>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="kuantan.php" method="post">
+									<form action="addorder.php" method="post">
 											<fieldset>
-											<input type="hidden" name="PRODUCTID" value="F15626" />
-												<input type="hidden" name="P_NAME" value=" DONUT" />
-												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												<input type="hidden" name="business" value=" " />
+												<input type="hidden" name="PRODUCTID" value="DONUT" />
+												<input type="hidden" name="O_TOTALPRICE" value="130.00" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -806,16 +798,22 @@ function Confirm() {
 										<p">KUIH PELITA</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">5.00</span>
-										
+										<span class="item_price">$399.99</span>
+										<del>$500.00</del>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="kuantan.php" method="post">
+                                    <form action="addorder.php" method="post">
 											<fieldset>
-											<input type="hidden" name="PRODUCTID" value="F75324" />
-												<input type="hidden" name="P_NAME" value=" KUIH PELITA" />
-												<input type="hidden" name="O_TOTALPRICE" value="5.00" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												<input type="hidden" name="business" value=" " />
+												<input type="hidden" name="PRODUCTID" value="KUIH PELITA" />
+												<input type="hidden" name="O_TOTALPRICE" value="399.99" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -840,16 +838,22 @@ function Confirm() {
 									<p>AIR TEBU</p>
 									</h4>
 									<div class="info-product-price">
-									<span class="item_price">3.00</span>
-										
+										<span class="item_price">$15.00</span>
+										<del>$25.00</del>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="kuantan.php" method="post">
+									<form action="addorder.php" method="post">
 											<fieldset>
-											<input type="hidden" name="PRODUCTID" value="D45963" />
-												<input type="hidden" name="P_NAME" value=" AIR TEBU" />
-												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												<input type="hidden" name="business" value=" " />
+												<input type="hidden" name="PRODUCTID" value="AIR TEBU" />
+												<input type="hidden" name="O_TOTALPRICE" value="15.00" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -869,16 +873,22 @@ function Confirm() {
 										<p>AIR KELAPA</p>
 									</h4>
 									<div class="info-product-price">
-									<span class="item_price">3.00</span>
-										
+										<span class="item_price">$98.00</span>
+										<del>$120.00</del>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="kuantan.php" method="post">
+									<form action="addorder.php" method="post">
 											<fieldset>
-											<input type="hidden" name="PRODUCTID" value="D43635" />
-												<input type="hidden" name="P_NAME" value=" AIR KELAPA" />
-												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												<input type="hidden" name="business" value=" " />
+												<input type="hidden" name="PRODUCTID" value="AIR KELAPA" />
+												<input type="hidden" name="O_TOTALPRICE" value="98.00" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -897,16 +907,22 @@ function Confirm() {
 									<h4>
 									
 									<div class="info-product-price">
-										<span class="item_price">3.00</span>
-								
+										<span class="item_price">$11.99</span>
+										<del>$15.00</del>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="kuantan.php" method="post">
+									<form action="addorder.php" method="post">
 											<fieldset>
-											<input type="hidden" name="PRODUCTID" value="D54920" />
-												<input type="hidden" name="P_NAME" value=" CENDOL" />
-												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+												<input type="hidden" name="cmd" value="_cart" />
+												<input type="hidden" name="add" value="1" />
+												<input type="hidden" name="business" value=" " />
+												<input type="hidden" name="PRODUCTID" value="CENDOL" />
+												<input type="hidden" name="O_TOTALPRICE" value="11.99" />
+												<input type="hidden" name="discount_amount" value="1.00" />
+												<input type="hidden" name="currency_code" value="USD" />
+												<input type="hidden" name="return" value=" " />
+												<input type="hidden" name="cancel_return" value=" " />
+												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
 									</div>
@@ -955,10 +971,16 @@ function Confirm() {
 								<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
 									<form action="#" method="post">
 										<fieldset>
-										<input type="hidden" name="PRODUCTID" value="1" />
-												<input type="hidden" name="P_NAME" value=" MURTABAK" />
-												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+											<input type="hidden" name="cmd" value="_cart" />
+											<input type="hidden" name="add" value="1" />
+											<input type="hidden" name="business" value=" " />
+											<input type="hidden" name="item_name" value="Aashirvaad, 5g" />
+											<input type="hidden" name="amount" value="220.00" />
+											<input type="hidden" name="discount_amount" value="1.00" />
+											<input type="hidden" name="currency_code" value="USD" />
+											<input type="hidden" name="return" value=" " />
+											<input type="hidden" name="cancel_return" value=" " />
+											<input type="submit" name="submit" value="Add to cart" class="button" />
 										</fieldset>
 									</form>
 								</div>
@@ -1017,10 +1039,16 @@ function Confirm() {
 								<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
 									<form action="bentong.php" method="post">
 										<fieldset>
-										<input type="hidden" name="PRODUCTID" value="1" />
-												<input type="hidden" name="P_NAME" value=" MURTABAK" />
-												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+											<input type="hidden" name="cmd" value="_cart" />
+											<input type="hidden" name="add" value="1" />
+											<input type="hidden" name="business" value=" " />
+											<input type="hidden" name="item_name" value="Madhur Pure Sugar, 1g" />
+											<input type="hidden" name="amount" value="69.00" />
+											<input type="hidden" name="discount_amount" value="1.00" />
+											<input type="hidden" name="currency_code" value="USD" />
+											<input type="hidden" name="return" value=" " />
+											<input type="hidden" name="cancel_return" value=" " />
+											<input type="submit" name="submit" value="Add to cart" class="button" />
 										</fieldset>
 									</form>
 								</div>
@@ -1079,10 +1107,16 @@ function Confirm() {
 								<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
 									<form action="#" method="post">
 										<fieldset>
-										<input type="hidden" name="PRODUCTID" value="1" />
-												<input type="hidden" name="P_NAME" value=" MURTABAK" />
-												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
-												<input type="submit" name="submit" value="Add to cart" class="button"/>
+											<input type="hidden" name="cmd" value="_cart" />
+											<input type="hidden" name="add" value="1" />
+											<input type="hidden" name="business" value=" " />
+											<input type="hidden" name="item_name" value="Cadbury Choclairs, 655.5g" />
+											<input type="hidden" name="amount" value="160.00" />
+											<input type="hidden" name="discount_amount" value="1.00" />
+											<input type="hidden" name="currency_code" value="USD" />
+											<input type="hidden" name="return" value=" " />
+											<input type="hidden" name="cancel_return" value=" " />
+											<input type="submit" name="submit" value="Add to cart" class="button" />
 										</fieldset>
 									</form>
 								</div>

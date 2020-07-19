@@ -1,11 +1,83 @@
 <!DOCTYPE html>
 <?php
 
-include('connection/connection.php');
 
-$sql = "SELECT * FROM PRODUCT ";
-$result = oci_parse($conn,$sql);
-oci_execute ($result);
+
+if(isset($_GET['ORDERID']))
+{
+  include("connection/connection.php");
+  include("secure/encrypt_decrypt.php");
+  $ORDERID = urldecode(secured_decrypt($_GET['ORDERID']));
+  //echo $ORDERID;
+  $sql = "SELECT * FROM orders WHERE ORDERID = $ORDERID";
+  //echo $sql;
+  $result4 = oci_parse($conn, $sql);
+	 oci_execute($result4);
+}
+
+function modalTitle($op)
+{
+	if($op == 'success')
+		$title = 'Berjaya!';
+	else
+		$title = 'Amaran!';
+
+	return $title;
+}
+function modalMessage($op)
+{
+	if($op == 'success')
+		$msg = 'Your order sucessfully submitted';
+	else if($op == 'errkod')
+		$msg = 'Please try again';
+
+	return $msg;
+}
+
+if(isset($_POST['submit']))
+{
+  include("connection/connection.php");
+  //$CUSTID =$_POST['CUSTID'];
+  
+  $O_TOTALPRICE =$_POST['O_TOTALPRICE'];
+  $PRODUCTID =$_POST['PRODUCTID'];
+  //$c_city = $_POST['c_city'];
+  
+  $biggest_id= oci_parse($conn, "SELECT ORDERID FROM orders");
+  oci_execute($biggest_id);
+  while($row = oci_fetch_array($biggest_id)){
+   $id = $row['ORDERID'];
+  
+  }
+
+  $query =  "UPDATE orders SET  PRODUCTID = '".$PRODUCTID."',O_TOTALPRICE =  '".$O_TOTALPRICE."'WHERE ORDERID = '".$id."'";
+	//echo $query;
+	$result = oci_parse($conn, $query);
+	 oci_execute($result);
+
+
+	 if (!$result) 
+	{
+	echo "<script>
+	$(document).ready(function(){
+		$('#myModal').modal('show');
+	});
+		</script>";
+
+	header("Location: bentong.php?op=errkod");
+	} 
+	else 
+	{
+	echo "<script>
+	$(document).ready(function(){
+		$('#myModal').modal('show');
+	});
+		</script>";
+
+	header("Location: bentong.php?op=success");
+	}
+
+}
 
 ?>
 
@@ -16,7 +88,8 @@ oci_execute ($result);
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="keywords" content="Grocery Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+	Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
 	<script>
 		addEventListener("load", function () {
 			setTimeout(hideURLbar, 0);
@@ -37,6 +110,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui1.css">
 	<!-- fonts -->
 	<link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800" rel="stylesheet">
+
+	<script type='text/javascript'>
+function Confirm() {
+  return confirm('Adakah anda pasti?');
+}
+</script>
 </head>
 
 <body>
@@ -96,9 +175,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<!-- cart details -->
 				<div class="top_nav_right">
 					<div class="wthreecartaits wthreecartaits2 cart cart box_1">
-						<form action="#" method="post" class="last">
-							<input type="hidden" name="cmd" value="_cart">
-							<input type="hidden" name="display" value="1">
+						<form action="checkout.php" method="post" class="last">
 							<button class="w3view-cart" type="submit" name="submit" value="">
 								<i class="fa fa-cart-arrow-down" aria-hidden="true"></i>
 							</button>
@@ -451,7 +528,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						</h3>
 						<p>Get flat
 							<span>10%</span> Cashback</p>
-						<a class="button2" href="product.html">Shop Now </a>
+							<a class="button2" href="addorder.php">Add more food </a>
 					</div>
 				</div>
 			</div>
@@ -463,7 +540,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						</h3>
 						<p>Get Upto
 							<span>30%</span> Off</p>
-						<a class="button2" href="product.html">Shop Now </a>
+						<a class="button2" href="addorder.php">Add more food </a>
 					</div>
 				</div>
 			</div>
@@ -476,7 +553,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<p>Get Best Offer Upto
 							<span>20%</span>
 						</p>
-						<a class="button2" href="product.html">Shop Now </a>
+						<a class="button2" href="addorder.php">Add more food </a>
 					</div>
 				</div>
 			</div>
@@ -488,7 +565,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						</h3>
 						<p>Get Now
 							<span>40%</span> Discount</p>
-						<a class="button2" href="product.html">Shop Now </a>
+							<a class="button2" href="addorder.php">Add more food </a>
 					</div>
 				</div>
 			</div>
@@ -529,14 +606,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\murtabak.jpg" alt="MURTABAK" width="90%" height="30%">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 								</div>
 								<div class="item-info-product ">
@@ -544,22 +613,26 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<p>MURTABAK</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$149.00</span>
-										<del>$280.00</del>
+										<span class="item_price">4.00</span>
+										
+									</div>
+									<div class="rating1">
+										<span class="starRating">
+											<input id="rating3" type="radio" name="rating" value="3" checked="">
+											<label for="rating3">3</label>
+											<input id="rating2" type="radio" name="rating" value="2">
+											<label for="rating2">2</label>
+											<input id="rating1" type="radio" name="rating" value="1">
+											<label for="rating1">1</label>
+										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="list.php" method="post">
+										<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="Almonds, 100g" />
-												<input type="hidden" name="amount" value="149.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+												<input type="hidden" name="PRODUCTID" value="F94852" />
+												<input type="hidden" name="P_NAME" value=" MURTABAK" />
+												<input type="hidden" name="O_TOTALPRICE" value="4.00" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -571,14 +644,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\satay.jpg" alt="SATAY">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 
 								</div>
@@ -587,21 +652,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<p>SATAY</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$200.00</span>
-										<del>$420.00</del>
+										<span class="item_price">20.00</span>
+										
+									</div>
+									<div >
+										<span class="starRating">
+											<input id="rating2" type="radio" name="rating" value="2">
+											<label for="rating2">2</label>
+											<input id="rating1" type="radio" name="rating" value="1">
+											<label for="rating1">1</label>
+										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+									<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="SATAY" />
-												<input type="hidden" name="amount" value="200.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
+											    <input type="hidden" name="PRODUCTID" value="F34587" />	
+											    <input type="hidden" name="P_NAME" value=" SATAY" />
+												<input type="hidden" name="O_TOTALPRICE" value="20.00" />
 												<input type="submit" name="submit" value="Add to cart" class="button" />
 											</fieldset>
 										</form>
@@ -614,14 +681,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\lemang.jpg" alt="LEMANG">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 
 								</div>
@@ -630,22 +689,30 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<p>LEMANG</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$520.99</span>
-										<del>$600.99</del>
+										<span class="item_price">10.00</span>
+										
+									</div>
+								<div class="rating1">
+										<span class="starRating">
+											<input id="rating5" type="radio" name="rating" value="5">
+											<label for="rating5">5</label>
+											<input id="rating4" type="radio" name="rating" value="4">
+											<label for="rating4">4</label>
+											<input id="rating3" type="radio" name="rating" value="3" checked="">
+											<label for="rating3">3</label>
+											<input id="rating2" type="radio" name="rating" value="2">
+											<label for="rating2">2</label>
+											<input id="rating1" type="radio" name="rating" value="1">
+											<label for="rating1">1</label>
+										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+									<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="LEMANG" />
-												<input type="hidden" name="amount" value="2.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+											<input type="hidden" name="PRODUCTID" value="F78799" />
+												<input type="hidden" name="P_NAME" value=" LEMANG" />
+												<input type="hidden" name="O_TOTALPRICE" value="10.00" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -665,14 +732,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\karipap.jpg" alt="KARIPAP" width="75%" height="30%">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-											<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 								</div>
 								<div class="item-info-product ">
@@ -681,22 +740,24 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$78.00</span>
-										<del>$110.00</del>
+									<span class="item_price">3.00</span>
+										
+									</div>
+									<div class="rating1">
+										<span class="starRating">
+											<input id="rating2" type="radio" name="rating" value="2">
+											<label for="rating2">2</label>
+											<input id="rating1" type="radio" name="rating" value="1">
+											<label for="rating1">1</label>
+										</span>
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+									<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="KARIPAP" />
-												<input type="hidden" name="amount" value="78.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+											<input type="hidden" name="PRODUCTID" value="F59533" />
+												<input type="hidden" name="P_NAME" value=" KARIPAP" />
+												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -708,14 +769,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\donut.jpg" alt="DONUT">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 
 								</div>
@@ -724,22 +777,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<p>DONUT</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$130.00</span>
-										<del>$150.00</del>
+										<span class="item_price">3.00</span>
+									
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+									<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="DONUT" />
-												<input type="hidden" name="amount" value="130.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+											<input type="hidden" name="PRODUCTID" value="F15626" />
+												<input type="hidden" name="P_NAME" value=" DONUT" />
+												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -751,14 +798,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\pelita.jpg" alt="KUIH PELITA">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 
 								</div>
@@ -767,22 +806,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<p">KUIH PELITA</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$399.99</span>
-										<del>$500.00</del>
+										<span class="item_price">5.00</span>
+										
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+										<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="KUIH PELITA" />
-												<input type="hidden" name="amount" value="399.99" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+											<input type="hidden" name="PRODUCTID" value="F75324" />
+												<input type="hidden" name="P_NAME" value=" KUIH PELITA" />
+												<input type="hidden" name="O_TOTALPRICE" value="5.00" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -800,36 +833,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\tebu.jpg" alt="AIR TEBU">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
+									
 								</div>
 								<div class="item-info-product ">
 									<h4>
 									<p>AIR TEBU</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$15.00</span>
-										<del>$25.00</del>
+									<span class="item_price">3.00</span>
+										
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+									<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="AIR TEBU" />
-												<input type="hidden" name="amount" value="15.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+											<input type="hidden" name="PRODUCTID" value="D45963" />
+												<input type="hidden" name="P_NAME" value=" MURTABAK" />
+												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -841,14 +861,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\kelapa.jpg" alt="AIR KELAPA">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 
 								</div>
@@ -857,22 +869,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<p>AIR KELAPA</p>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$98.00</span>
-										<del>$120.00</del>
+									<span class="item_price">3.00</span>
+										
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+									<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="AIR KELAPA" />
-												<input type="hidden" name="amount" value="98.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+											<input type="hidden" name="PRODUCTID" value="D43635" />
+												<input type="hidden" name="P_NAME" value=" AIR KELAPA" />
+												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -884,41 +890,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
 									<img src="..\bazaar\gambar\cendol.jpg" alt="CENDOL">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-										<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' class=link-product-add-cart>QUICK VIEW</a>";
-											?>
-										</div>
-									</div>
 									<span class="product-new-top">New</span>
 
 								</div>
 								<div class="item-info-product ">
 									<h4>
-									<?php
-												include('connection/connection.php');
-												echo "<a href='list.php?productid=".(oci_execute($result))."' >CENDOL</a>";
-											?>
-									</h4>
+									
 									<div class="info-product-price">
-										<span class="item_price">$11.99</span>
-										<del>$15.00</del>
+										<span class="item_price">3.00</span>
+								
 									</div>
 									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
+									<form action="bentong.php" method="post">
 											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="CENDOL" />
-												<input type="hidden" name="amount" value="11.99" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
+											<input type="hidden" name="PRODUCTID" value="D54920" />
+												<input type="hidden" name="P_NAME" value=" CENDOL" />
+												<input type="hidden" name="O_TOTALPRICE" value="3.00" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 											</fieldset>
 										</form>
 									</div>
@@ -967,16 +955,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
 									<form action="#" method="post">
 										<fieldset>
-											<input type="hidden" name="cmd" value="_cart" />
-											<input type="hidden" name="add" value="1" />
-											<input type="hidden" name="business" value=" " />
-											<input type="hidden" name="item_name" value="Aashirvaad, 5g" />
-											<input type="hidden" name="amount" value="220.00" />
-											<input type="hidden" name="discount_amount" value="1.00" />
-											<input type="hidden" name="currency_code" value="USD" />
-											<input type="hidden" name="return" value=" " />
-											<input type="hidden" name="cancel_return" value=" " />
-											<input type="submit" name="submit" value="Add to cart" class="button" />
+										<input type="hidden" name="PRODUCTID" value="1" />
+												<input type="hidden" name="P_NAME" value=" MURTABAK" />
+												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 										</fieldset>
 									</form>
 								</div>
@@ -1033,18 +1015,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<p>Save $20.00</p>
 								</div>
 								<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-									<form action="#" method="post">
+									<form action="bentong.php" method="post">
 										<fieldset>
-											<input type="hidden" name="cmd" value="_cart" />
-											<input type="hidden" name="add" value="1" />
-											<input type="hidden" name="business" value=" " />
-											<input type="hidden" name="item_name" value="Madhur Pure Sugar, 1g" />
-											<input type="hidden" name="amount" value="69.00" />
-											<input type="hidden" name="discount_amount" value="1.00" />
-											<input type="hidden" name="currency_code" value="USD" />
-											<input type="hidden" name="return" value=" " />
-											<input type="hidden" name="cancel_return" value=" " />
-											<input type="submit" name="submit" value="Add to cart" class="button" />
+										<input type="hidden" name="PRODUCTID" value="1" />
+												<input type="hidden" name="P_NAME" value=" MURTABAK" />
+												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 										</fieldset>
 									</form>
 								</div>
@@ -1103,16 +1079,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
 									<form action="#" method="post">
 										<fieldset>
-											<input type="hidden" name="cmd" value="_cart" />
-											<input type="hidden" name="add" value="1" />
-											<input type="hidden" name="business" value=" " />
-											<input type="hidden" name="item_name" value="Cadbury Choclairs, 655.5g" />
-											<input type="hidden" name="amount" value="160.00" />
-											<input type="hidden" name="discount_amount" value="1.00" />
-											<input type="hidden" name="currency_code" value="USD" />
-											<input type="hidden" name="return" value=" " />
-											<input type="hidden" name="cancel_return" value=" " />
-											<input type="submit" name="submit" value="Add to cart" class="button" />
+										<input type="hidden" name="PRODUCTID" value="1" />
+												<input type="hidden" name="P_NAME" value=" MURTABAK" />
+												<input type="hidden" name="O_TOTALPRICE" value="1.50" />
+												<input type="submit" name="submit" value="Add to cart" class="button"/>
 										</fieldset>
 									</form>
 								</div>
@@ -1352,25 +1322,217 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<!-- cart-js -->
 	<script src="js/minicart.js"></script>
 	<script>
-		paypalm.minicartk.render(); //use only unique class names other than paypalm.minicartk.Also Replace same class name in css and minicart.min.js
+		// ************************************************
+	// Shopping Cart API
+	// ************************************************
 
-		paypalm.minicartk.cart.on('checkout', function (evt) {
-			var items = this.items(),
-				len = items.length,
-				total = 0,
-				i;
+	var shoppingCart = (function() {
+	  // =============================
+	  // Private methods and propeties
+	  // =============================
+	  cart = [];
+	  
+	  // Constructor
+	  function Item(name, price, count) {
+		this.name = name;
+		this.price = price;
+		this.count = count;
+	  }
+	  
+	  // Save cart
+	  function saveCart() {
+		sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+	  }
+	  
+		// Load cart
+	  function loadCart() {
+		cart = JSON.parse(sessionStorage.getItem('shoppingCart'));
+	  }
+	  if (sessionStorage.getItem("shoppingCart") != null) {
+		loadCart();
+	  }
+	  
 
-			// Count the number of each item in the cart
-			for (i = 0; i < len; i++) {
-				total += items[i].get('quantity');
+	  // =============================
+	  // Public methods and propeties
+	  // =============================
+	  var obj = {};
+	  
+	  // Add to cart
+	  obj.addItemToCart = function(name, price, count) {
+		for(var item in cart) {
+		  if(cart[item].name === name) {
+			cart[item].count ++;
+			saveCart();
+			return;
+		  }
+		}
+		var item = new Item(name, price, count);
+		cart.push(item);
+		saveCart();
+	  }
+	  // Set count from item
+	  obj.setCountForItem = function(name, count) {
+		for(var i in cart) {
+		  if (cart[i].name === name) {
+			cart[i].count = count;
+			break;
+		  }
+		}
+	  };
+	  // Remove item from cart
+	  obj.removeItemFromCart = function(name) {
+		  for(var item in cart) {
+			if(cart[item].name === name) {
+			  cart[item].count --;
+			  if(cart[item].count === 0) {
+				cart.splice(item, 1);
+			  }
+			  break;
 			}
+		}
+		saveCart();
+	  }
 
-			if (total < 3) {
-				alert('The minimum order quantity is 3. Please add more to your shopping cart before checking out');
-				evt.preventDefault();
-			}
-		});
-	</script>
+	  // Remove all items from cart
+	  obj.removeItemFromCartAll = function(name) {
+		for(var item in cart) {
+		  if(cart[item].name === name) {
+			cart.splice(item, 1);
+			break;
+		  }
+		}
+		saveCart();
+	  }
+
+	  // Clear cart
+	  obj.clearCart = function() {
+		cart = [];
+		saveCart();
+	  }
+
+	  // Count cart 
+	  obj.totalCount = function() {
+		var totalCount = 0;
+		for(var item in cart) {
+		  totalCount += cart[item].count;
+		}
+		return totalCount;
+	  }
+
+	  // Total cart
+	  obj.totalCart = function() {
+		var totalCart = 0;
+		for(var item in cart) {
+		  totalCart += cart[item].price * cart[item].count;
+		}
+		return Number(totalCart.toFixed(2));
+	  }
+
+	  // List cart
+	  obj.listCart = function() {
+		var cartCopy = [];
+		for(i in cart) {
+		  item = cart[i];
+		  itemCopy = {};
+		  for(p in item) {
+			itemCopy[p] = item[p];
+
+		  }
+		  itemCopy.total = Number(item.price * item.count).toFixed(2);
+		  cartCopy.push(itemCopy)
+		}
+		return cartCopy;
+	  }
+
+	  // cart : Array
+	  // Item : Object/Class
+	  // addItemToCart : Function
+	  // removeItemFromCart : Function
+	  // removeItemFromCartAll : Function
+	  // clearCart : Function
+	  // countCart : Function
+	  // totalCart : Function
+	  // listCart : Function
+	  // saveCart : Function
+	  // loadCart : Function
+	  return obj;
+	})();
+
+
+	// *****************************************
+	// Triggers / Events
+	// ***************************************** 
+	// Add item
+	$('.add-to-cart').click(function(event) {
+	  event.preventDefault();
+	  var name = $(this).data('name');
+	  var price = Number($(this).data('price'));
+	  shoppingCart.addItemToCart(name, price, 1);
+	  displayCart();
+	});
+
+	// Clear items
+	$('.clear-cart').click(function() {
+	  shoppingCart.clearCart();
+	  displayCart();
+	});
+
+
+	function displayCart() {
+	  var cartArray = shoppingCart.listCart();
+	  var output = "";
+	  for(var i in cartArray) {
+		output += "<tr>"
+		  + "<td>" + cartArray[i].name + "</td>" 
+		  + "<td>(" + cartArray[i].price + ")</td>"
+		  + "<td><div class='input-group'><button class='minus-item input-group-addon btn btn-primary' data-name=" + cartArray[i].name + ">-</button>"
+		  + "<input type='number' class='item-count form-control' data-name='" + cartArray[i].name + "' value='" + cartArray[i].count + "'>"
+		  + "<button class='plus-item btn btn-primary input-group-addon' data-name=" + cartArray[i].name + ">+</button></div></td>"
+		  + "<td><button class='delete-item btn btn-danger' data-name=" + cartArray[i].name + ">X</button></td>"
+		  + " = " 
+		  + "<td>" + cartArray[i].total + "</td>" 
+		  +  "</tr>";
+	  }
+	  $('.show-cart').html(output);
+	  $('.total-cart').html(shoppingCart.totalCart());
+	  $('.total-count').html(shoppingCart.totalCount());
+	}
+
+	// Delete item button
+
+	$('.show-cart').on("click", ".delete-item", function(event) {
+	  var name = $(this).data('name')
+	  shoppingCart.removeItemFromCartAll(name);
+	  displayCart();
+	})
+
+
+	// -1
+	$('.show-cart').on("click", ".minus-item", function(event) {
+	  var name = $(this).data('name')
+	  shoppingCart.removeItemFromCart(name);
+	  displayCart();
+	})
+	// +1
+	$('.show-cart').on("click", ".plus-item", function(event) {
+	  var name = $(this).data('name')
+	  shoppingCart.addItemToCart(name);
+	  displayCart();
+	})
+
+	// Item count input
+	$('.show-cart').on("change", ".item-count", function(event) {
+	   var name = $(this).data('name');
+	   var count = Number($(this).val());
+	  shoppingCart.setCountForItem(name, count);
+	  displayCart();
+	});
+
+	displayCart();
+	
+</script>
+
 	<!-- //cart-js -->
 
 	<!-- price range (top products) -->

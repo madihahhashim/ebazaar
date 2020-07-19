@@ -1,44 +1,100 @@
+
 <!DOCTYPE html>
 <?php
 
-  include("connection/connection.php");
-  include("secure/encrypt_decrypt.php");
+include('connection/connection.php');
+include("secure/encrypt_decrypt.php");
 
-	 $biggest_id2= oci_parse($conn, "SELECT CUSTID FROM customer");
-	 oci_execute($biggest_id2);
-	 while($row2 = oci_fetch_array($biggest_id2))
-	 {
-	  $id2 = $row2['CUSTID'];
-	 }
+//$ADMINID =$_POST['ADMINID'];
 
-    $query = "SELECT orderid, o_date, o_time, o_totalprice, p.productid, p.p_name FROM orders o  
-	JOIN product p ON o.PRODUCTID=p.PRODUCTID JOIN customer c ON o.CUSTID=c.CUSTID
-	 WHERE c.CUSTID ='".$id2."' ";
+if(isset($_POST['bentong']))
+{
+	$query = "INSERT INTO orders(ORDERID,  O_TOTALPRICE, O_STATUS)VALUES(orderid_seq.NEXTVAL,  0, 'PENDING')";
 	$result = oci_parse($conn, $query);
 	 oci_execute($result);
 
-	 $sql = "SELECT  sum(O_TOTALPRICE)  FROM orders o JOIN customer c ON o.CUSTID=c.CUSTID 
-	 where c.CUSTID = $id2 ";
-	$re = oci_parse($conn, $sql);
-	oci_execute($re);
-	$sum = oci_fetch_array($re);
+	 $biggest_id= oci_parse($conn, "SELECT ORDERID FROM orders");
+	 oci_execute($biggest_id);
+	 while($row = oci_fetch_array($biggest_id)){
+	  $id = $row['ORDERID'];
+	 
+	 }
+	 $biggest_id2= oci_parse($conn, "SELECT CUSTID FROM customer");
+	 oci_execute($biggest_id2);
+	 while($row2 = oci_fetch_array($biggest_id2)){
+	  $id2 = $row2['CUSTID'];
+	 
+	 }
 
 	
+	 $sql =  "UPDATE orders SET  O_DATE = sysdate, O_TIME = sysdate, CUSTID='".$id2."', ADMINID = 1 WHERE ORDERID = '".$id."'";
+	 $result1 = oci_parse($conn, $sql);
+	 oci_execute($result1);
+
+	 header("Location: bentong.php?ORDERID=".urlencode(secured_encrypt($id))."");
+}
+if(isset($_POST['temerloh']))
+{
+	$query = "INSERT INTO orders(ORDERID,  O_TOTALPRICE, O_STATUS)VALUES(orderid_seq.NEXTVAL,  0, 'PENDING')";
+	$result = oci_parse($conn, $query);
+	 oci_execute($result);
+
+	 $biggest_id= oci_parse($conn, "SELECT ORDERID FROM orders");
+	 oci_execute($biggest_id);
+	 while($row = oci_fetch_array($biggest_id)){
+	  $id = $row['ORDERID'];
+	 
+	 }
+	 $biggest_id2= oci_parse($conn, "SELECT CUSTID FROM customer");
+	 oci_execute($biggest_id2);
+	 while($row2 = oci_fetch_array($biggest_id2)){
+	  $id2 = $row2['CUSTID'];
+	 
+	 }
 
 
+	 $sql =  "UPDATE orders SET  O_DATE = sysdate, O_TIME = sysdate, CUSTID='".$id2."', ADMINID = 1 WHERE ORDERID = '".$id."'";
+	 $result1 = oci_parse($conn, $sql);
+	 oci_execute($result1);
+
+	 header("Location: 'temerloh.php?ORDERID=".urlencode(secured_encrypt($id))."'");
+}
+if(isset($_POST['kuantan']))
+{
+    $query = "INSERT INTO orders(ORDERID,  O_TOTALPRICE, O_STATUS)VALUES(orderid_seq.NEXTVAL,  0, 'PENDING')";
+	$result = oci_parse($conn, $query);
+	 oci_execute($result);
+
+	 $biggest_id= oci_parse($conn, "SELECT ORDERID FROM orders");
+	 oci_execute($biggest_id);
+	 while($row = oci_fetch_array($biggest_id)){
+	  $id = $row['ORDERID'];
+	 
+	 }
+	 $biggest_id2= oci_parse($conn, "SELECT CUSTID FROM customer");
+	 oci_execute($biggest_id2);
+	 while($row2 = oci_fetch_array($biggest_id2)){
+	  $id2 = $row2['CUSTID'];
+	 
+	 }
+
+	 $sql =  "UPDATE orders SET  O_DATE = sysdate, O_TIME = sysdate, CUSTID='".$id2."', ADMINID = 1 WHERE ORDERID = '".$id."'";
+	 $result1 = oci_parse($conn, $sql);
+	 oci_execute($result1);
+
+	 header("Location: 'kuantan.php?ORDERID=".urlencode(secured_encrypt($id))."'");
+}
 
 ?>
-
 <html lang="zxx">
 
 <head>
-<title>eBazar</title>
+	<title>eBazaar</title>
 	<!--/tags -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="keywords" content="Grocery Shoppy Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-	Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 	<script>
 		addEventListener("load", function () {
 			setTimeout(hideURLbar, 0);
@@ -73,7 +129,7 @@
 			<!-- header-bot-->
 			<div class="col-md-4 logo_agile">
 				<h1>
-					<a href="index.php">
+				<a href="index.php">
 						<span>e</span>
 						<span>B</span>azar
 						<img src="images/logo2.png" alt=" ">
@@ -136,6 +192,40 @@
 	<div id="small-dialog1" class="mfp-hide">
 		<div class="select-city">
 			<h3>Please Select Your Location</h3>
+			<select class="list_of_cities">
+				<optgroup label="Popular Cities">
+					<option selected style="display:none;color:#eee;">Select City</option>
+					<option>Birmingham</option>
+					<option>Anchorage</option>
+					<option>Phoenix</option>
+					<option>Little Rock</option>
+					<option>Los Angeles</option>
+					<option>Denver</option>
+					<option>Bridgeport</option>
+					<option>Wilmington</option>
+					<option>Jacksonville</option>
+					<option>Atlanta</option>
+					<option>Honolulu</option>
+					<option>Boise</option>
+					<option>Chicago</option>
+					<option>Indianapolis</option>
+				</optgroup>
+				<optgroup label="Alabama">
+					<option>Birmingham</option>
+					<option>Montgomery</option>
+					<option>Mobile</option>
+					<option>Huntsville</option>
+					<option>Tuscaloosa</option>
+				</optgroup>
+				<optgroup label="Alaska">
+					<option>Anchorage</option>
+					<option>Fairbanks</option>
+					<option>Juneau</option>
+					<option>Sitka</option>
+					<option>Ketchikan</option>
+				</optgroup>
+				
+			</select>
 			<div class="clearfix"></div>
 		</div>
 	</div>
@@ -227,24 +317,7 @@
 	<!-- navigation -->
 	<div class="ban-top">
 		<div class="container">
-			<div class="agileits-navi_search">
-				<form action="#" method="post">
-					<select id="agileinfo-nav_search" name="agileinfo_search" required="">
-						<option value="">All Categories</option>
-						<option value="Kitchen">Kitchen</option>
-						<option value="Household">Household</option>
-						<option value="Snacks &amp; Beverages">Snacks & Beverages</option>
-						<option value="Personal Care">Personal Care</option>
-						<option value="Gift Hampers">Gift Hampers</option>
-						<option value="Fruits &amp; Vegetables">Fruits & Vegetables</option>
-						<option value="Baby Care">Baby Care</option>
-						<option value="Soft Drinks &amp; Juices">Soft Drinks & Juices</option>
-						<option value="Frozen Food">Frozen Food</option>
-						<option value="Bread &amp; Bakery">Bread & Bakery</option>
-						<option value="Sweets">Sweets</option>
-					</select>
-				</form>
-			</div>
+			
 			<div class="top_nav_left">
 				<nav class="navbar navbar-default">
 					<div class="container-fluid">
@@ -261,8 +334,8 @@
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse menu--shylock" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav menu__list">
-								<li>
-									<a class="nav-stylehead" href="index.html">Home
+								<li class="active">
+									<a class="nav-stylehead" href="index.php">Home
 										<span class="sr-only">(current)</span>
 									</a>
 								</li>
@@ -408,8 +481,8 @@
 										</li>
 									</ul>
 								</li>
-								<li>
-									<a class="" href="contact.html">Contact</a>
+								<li class="">
+									<a class="nav-stylehead" href="contact.html">Contact</a>
 								</li>
 							</ul>
 						</div>
@@ -419,31 +492,82 @@
 		</div>
 	</div>
 	<!-- //navigation -->
-	<!-- banner-2 -->
-	<div class="page-head_agile_info_w3l">
-
-	</div>
-	<!-- //banner-2 -->
-	<!-- page -->
-	<div class="services-breadcrumb">
-		<div class="agile_inner_breadcrumb">
-			<div class="container">
-				<ul class="w3_short">
-					<li>
-						<a href="index.html">Home</a>
-						<i>|</i>
-					</li>
-					<li>Checkout</li>
-				</ul>
+	<!-- banner -->
+	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+		<!-- Indicators-->
+		<ol class="carousel-indicators">
+			<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+			<li data-target="#myCarousel" data-slide-to="1" class=""></li>
+			<li data-target="#myCarousel" data-slide-to="2" class=""></li>
+			<li data-target="#myCarousel" data-slide-to="3" class=""></li>
+		</ol>
+		<div class="carousel-inner" role="listbox">
+			<div class="item active">
+				<div class="container">
+					<div class="carousel-caption">
+						<h3>Big
+							<span>Save</span>
+						</h3>
+						<p>Get flat
+							<span>10%</span> Cashback</p>
+						<a class="button2" href="product.html">Shop Now </a>
+					</div>
+				</div>
+			</div>
+			<div class="item item2">
+				<div class="container">
+					<div class="carousel-caption">
+						<h3>Healthy
+							<span>Saving</span>
+						</h3>
+						<p>Get Upto
+							<span>30%</span> Off</p>
+						<a class="button2" href="product.html">Shop Now </a>
+					</div>
+				</div>
+			</div>
+			<div class="item item3">
+				<div class="container">
+					<div class="carousel-caption">
+						<h3>Big
+							<span>Deal</span>
+						</h3>
+						<p>Get Best Offer Upto
+							<span>20%</span>
+						</p>
+						<a class="button2" href="product.html">Shop Now </a>
+					</div>
+				</div>
+			</div>
+			<div class="item item4">
+				<div class="container">
+					<div class="carousel-caption">
+						<h3>Today
+							<span>Discount</span>
+						</h3>
+						<p>Get Now
+							<span>40%</span> Discount</p>
+						<a class="button2" href="product.html">Shop Now </a>
+					</div>
+				</div>
 			</div>
 		</div>
+		<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+			<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+			<span class="sr-only">Previous</span>
+		</a>
+		<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+			<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+			<span class="sr-only">Next</span>
+		</a>
 	</div>
-	<!-- //page -->
-	<!-- checkout page -->
-	<div class="privacy">
+	<!-- //banner -->
+
+	<!-- top Products -->
+	<div class="ads-grid">
 		<div class="container">
 			<!-- tittle heading -->
-			<h3 class="tittle-w3l">Checkout
+			<h3 class="tittle-w3l">Choose your state
 				<span class="heading-style">
 					<i></i>
 					<i></i>
@@ -451,60 +575,147 @@
 				</span>
 			</h3>
 			<!-- //tittle heading -->
-			<div class="checkout-right">
-				<h4>Your shopping cart contains:
+			<!-- product left -->
+			
+			<!-- //product left -->
+			<!-- product right -->
+			<div class="agileinfo-ads-display col-md-20">
+				<div class="wrapper">
+				<form action="order.php" method="post" class="creditly-card-form agileinfo_form">
+					<!-- first section (nuts) -->
+					<div class="product-sec1">
 					
-				</h4>
+						<div class="col-md-15 product-men">
+							<div class="men-pro-item simpleCart_shelfItem">
+								<div class="men-thumb-item">
+								<button type="submit" name = "bentong" id="close-image"><img src="..\bazaar\gambar\bentong.jpg" alt="BENTONG"  ></button>
+								</div><br/>
+								<h3 class="heading-tittle">BENTONG</h3>
+							</div>
+						</div>
+						<form>
+						<div class="clearfix"></div>
+					</div>
+					<!-- //first section (nuts) -->
+					
+					<!-- third section (oils) -->
+					
+					<div class="product-sec1">
 				
-				<div class="table-responsive">
-					<table class="timetable_sub">
-						<thead>
-							<tr>
-								
-								<th>Product</th>
-								<th>Product Name</th>
-								<th>PRODUCT PRICE</th>
-								<th>REMOVE</th>
-							</tr>
-						</thead>
-						<tbody>
-						<?php
-						include("connection/connection.php");
+						<div class="col-md-15 product-men">
+							<div class="men-pro-item simpleCart_shelfItem">
+								<div class="men-thumb-item">
+								<button type="submit" name = "temerloh" id="close-image"><img src="..\bazaar\gambar\temerloh.jpg" alt="TEMERLOH"  ></button>
+								</div><br/>
+								<h3 class="heading-tittle">TEMERLOH</h3>
+							</div>
+						</div>
 						
-
-							while($row=oci_fetch_assoc($result))
-							{
-								
-								echo "<tr>";
-								echo "<td>" . $row['PRODUCTID'] . "</td>";
-								echo "<td>"  .$row['P_NAME']. "</td>";
-								echo "<td>" . $row['O_TOTALPRICE'] . "</td>";
-								echo "<td><button class=btn btn-danger text-white><a href='updatecheckout.php?ORDERID=".urlencode(secured_encrypt($row['ORDERID']))."'>DELETE</a></button></td>";
-								echo "</tr>";
-
-							}
-
-							echo "<tr>";
-							echo "<td colspan = 4>TOTAL: RM " .$sum[0]."</td>";
-							echo "</tr>";
-
-							oci_free_statement($result);
-							oci_close($conn);
-						?>
-						</tbody>
-						
-					</table>
+						<div class="clearfix"></div>
+					</div>
+					<!-- //third section (oils) -->
+					<!-- fourth section (noodles) -->
+					
+					<div class="product-sec1">
+					
+						<div class="col-md-15 product-men">
+							<div class="men-pro-item simpleCart_shelfItem">
+								<div class="men-thumb-item">
+								<button type="submit" name = "kuantan" id="close-image"><img src="..\bazaar\gambar\kuantan.jpg" alt="KUANTAN" width="50%" height="50%" ></button>
+								</div><br/>
+								<h3 class="heading-tittle">KUANTAN</h3>
+							</div>
+						</div>
+						<form>
+						<div class="clearfix"></div>
+					</div>
+					<!-- //fourth section (noodles) -->
 				</div>
 			</div>
+			<!-- //product right -->
+		</div>
+	</div>
+	<!-- //top products -->
+	<!-- special offers -->
+	<div class="featured-section" id="projects">
+		<div class="container">
+			<!-- tittle heading -->
 			
-
-				
-	<!-- //checkout page -->
+	<!-- //special offers -->
 	<!-- newsletter -->
 	
+	<!-- //newsletter -->
+	<!-- footer -->
+	<footer>
+		<div class="container">
+			<!-- footer first section -->
+			
+			<!-- //footer first section -->
+			<!-- footer second section -->
+			
+			<!-- //footer second section -->
+			<!-- footer third section -->
+			<div class="footer-info w3-agileits-info">
+				<!-- footer categories -->
+			
+				<!-- //footer categories -->
+				<!-- quick links -->
+				<div class="col-sm-5 address-right">
+					<div class="col-xs-6 footer-grids">
+						<h3>Quick Links</h3>
+						<ul>
+							<li>
+								<a href="about.html">About Us</a>
+							</li>
+							<li>
+								<a href="contact.html">Contact Us</a>
+							</li>
+							<li>
+								<a href="help.html">Help</a>
+							</li>
+							<li>
+								<a href="faqs.html">Faqs</a>
+							</li>
+							<li>
+								<a href="terms.html">Terms of use</a>
+							</li>
+							<li>
+								<a href="privacy.html">Privacy Policy</a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-xs-6 footer-grids">
+						<h3>Get in Touch</h3>
+						<ul>
+							<li>
+								<i class="fa fa-map-marker"></i> 123 Sebastian, USA.</li>
+							<li>
+								<i class="fa fa-mobile"></i> 333 222 3333 </li>
+							<li>
+								<i class="fa fa-phone"></i> +222 11 4444 </li>
+							<li>
+								<i class="fa fa-envelope-o"></i>
+								<a href="mailto:example@mail.com"> mail@example.com</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- //quick links -->
+				<!-- social icons -->
+				
+
+			<!-- //footer fourth section (text) -->
+		</div>
+	</footer>
 	<!-- //footer -->
 	<!-- copyright -->
-	
+	<div class="copy-right">
+		<div class="container">
+			<p>© 2017 Grocery Shoppy. All rights reserved | Design by
+				<a href="http://w3layouts.com"> W3layouts.</a>
+			</p>
+		</div>
+	</div>
 	<!-- //copyright -->
 
 	<!-- js-files -->
@@ -539,7 +750,7 @@
 	<!-- cart-js -->
 	<script src="js/minicart.js"></script>
 	<script>
-		paypalm.minicartk.render(); //use only unique class names other than paypal1.minicart1.Also Replace same class name in css and minicart.min.js
+		paypalm.minicartk.render(); //use only unique class names other than paypalm.minicartk.Also Replace same class name in css and minicart.min.js
 
 		paypalm.minicartk.cart.on('checkout', function (evt) {
 			var items = this.items(),
@@ -560,49 +771,56 @@
 	</script>
 	<!-- //cart-js -->
 
-	<!--quantity-->
+	<!-- price range (top products) -->
+	<script src="js/jquery-ui.js"></script>
 	<script>
-		$('.value-plus').on('click', function () {
-			var divUpd = $(this).parent().find('.value'),
-				newVal = parseInt(divUpd.text(), 10) + 1;
-			divUpd.text(newVal);
-		});
+		//<![CDATA[ 
+		$(window).load(function () {
+			$("#slider-range").slider({
+				range: true,
+				min: 0,
+				max: 9000,
+				values: [50, 6000],
+				slide: function (event, ui) {
+					$("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+				}
+			});
+			$("#amount").val("$" + $("#slider-range").slider("values", 0) + " - $" + $("#slider-range").slider("values", 1));
 
-		$('.value-minus').on('click', function () {
-			var divUpd = $(this).parent().find('.value'),
-				newVal = parseInt(divUpd.text(), 10) - 1;
-			if (newVal >= 1) divUpd.text(newVal);
-		});
+		}); //]]>
 	</script>
-	<!--quantity-->
+	<!-- //price range (top products) -->
+
+	<!-- flexisel (for special offers) -->
+	<script src="js/jquery.flexisel.js"></script>
 	<script>
-		$(document).ready(function (c) {
-			$('.close1').on('click', function (c) {
-				$('.rem1').fadeOut('slow', function (c) {
-					$('.rem1').remove();
-				});
+		$(window).load(function () {
+			$("#flexiselDemo1").flexisel({
+				visibleItems: 3,
+				animationSpeed: 1000,
+				autoPlay: true,
+				autoPlaySpeed: 3000,
+				pauseOnHover: true,
+				enableResponsiveBreakpoints: true,
+				responsiveBreakpoints: {
+					portrait: {
+						changePoint: 480,
+						visibleItems: 1
+					},
+					landscape: {
+						changePoint: 640,
+						visibleItems: 2
+					},
+					tablet: {
+						changePoint: 768,
+						visibleItems: 2
+					}
+				}
 			});
+
 		});
 	</script>
-	<script>
-		$(document).ready(function (c) {
-			$('.close2').on('click', function (c) {
-				$('.rem2').fadeOut('slow', function (c) {
-					$('.rem2').remove();
-				});
-			});
-		});
-	</script>
-	<script>
-		$(document).ready(function (c) {
-			$('.close3').on('click', function (c) {
-				$('.rem3').fadeOut('slow', function (c) {
-					$('.rem3').remove();
-				});
-			});
-		});
-	</script>
-	<!--//quantity-->
+	<!-- //flexisel (for special offers) -->
 
 	<!-- password-script -->
 	<script>
@@ -666,6 +884,7 @@
 	<script src="js/bootstrap.js"></script>
 	<!-- //for bootstrap working -->
 	<!-- //js-files -->
+
 
 </body>
 
